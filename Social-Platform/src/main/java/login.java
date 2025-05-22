@@ -28,8 +28,8 @@ public class login extends HttpServlet {
         user.setUname("czm");
         user.setUpwd("123456");
 
-        Date sqlDate = new Date(new java.util.Date().getTime());
-        user.setUbirthday(sqlDate);
+//        Date sqlDate = new Date(new java.util.Date().getTime());
+        user.setUbirthday("2005-1-1");
         suid.insert(user);
     }
     public void doPost(HttpServletRequest request, HttpServletResponse response)

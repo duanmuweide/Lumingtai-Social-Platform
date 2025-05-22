@@ -1,25 +1,27 @@
 package cn.qdu.entity;
 
 import java.io.Serializable;
-import java.sql.Date;
 
 /**
  * @author Honey
- * Create on 2025-05-16 15:57:47
+ * Create on 2025-05-19 19:29:10
  */
 public class Users implements Serializable {
 
-	private static final long serialVersionUID = 1592950104834L;
+	private static final long serialVersionUID = 1593229997477L;
 
-	private Integer uid;//用户id 主键 自动增长
-	private String uname;//用户名
-	private String upwd;//用户密码
-	private String uquestion;//密码查询问题
-	private String uanswer;//密码查询答案
-	private Date ubirthday;//用户生日
-	private Boolean ugender;//用户性别
-	private String uhobby;//用户爱好
-	private String usign;//用户签名
+	private Integer uid;
+	private String uname;
+	private String upwd;
+	private String uquestion;
+	private String uanswer;
+	private String ubirthday;
+	private Boolean ugender;
+	private String uhobby;
+	private String usign;
+	private String uphonenumber;
+	private String uemail;
+	private String ulmage;
 
 	public Integer getUid() {
 		return uid;
@@ -61,11 +63,11 @@ public class Users implements Serializable {
 		this.uanswer = uanswer;
 	}
 
-	public Date getUbirthday() {
+	public String getUbirthday() {
 		return ubirthday;
 	}
 
-	public void setUbirthday(Date ubirthday) {
+	public void setUbirthday(String ubirthday) {
 		this.ubirthday = ubirthday;
 	}
 
@@ -93,6 +95,30 @@ public class Users implements Serializable {
 		this.usign = usign;
 	}
 
+	public String getUphonenumber() {
+		return uphonenumber;
+	}
+
+	public void setUphonenumber(String uphonenumber) {
+		this.uphonenumber = uphonenumber;
+	}
+
+	public String getUemail() {
+		return uemail;
+	}
+
+	public void setUemail(String uemail) {
+		this.uemail = uemail;
+	}
+
+	public String getUlmage() {
+		return ulmage;
+	}
+
+	public void setUlmage(String ulmage) {
+		this.ulmage = ulmage;
+	}
+
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 		str.append("Users[");
@@ -105,6 +131,9 @@ public class Users implements Serializable {
 		str.append(",ugender=").append(ugender);
 		str.append(",uhobby=").append(uhobby);
 		str.append(",usign=").append(usign);
+		str.append(",uphonenumber=").append(uphonenumber);
+		str.append(",uemail=").append(uemail);
+		str.append(",ulmage=").append(ulmage);
 		str.append("]");
 		return str.toString();
 	}

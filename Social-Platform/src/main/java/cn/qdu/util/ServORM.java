@@ -24,5 +24,13 @@ public class ServORM {
         // genSomeBeanFile的参数：是数据库中的表名
         // ORM框架一般会自动读取默认位置的数据库配置文件
         new GenBean(genConfig).genSomeBeanFile("users");
+        new GenBean(genConfig).genSomeBeanFile("comments");
+        new GenBean(genConfig).genSomeBeanFile("conversations");
+        new GenBean(genConfig).genSomeBeanFile("groupsconversations");
+        new GenBean(genConfig).genSomeBeanFile("groupspeople");
+        new GenBean(genConfig).genSomeBeanFile("posts");
+        new GenBean(genConfig).genSomeBeanFile("relationship");
+        new GenBean(genConfig).genSomeBeanFile("usergroups");
+
     }
 }
