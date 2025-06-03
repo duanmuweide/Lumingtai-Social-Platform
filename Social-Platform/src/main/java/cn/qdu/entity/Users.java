@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 /**
  * @author Honey
- * Create on 2025-05-19 19:29:10
+ * Create on 2025-06-02 19:19:54
  */
 public class Users implements Serializable {
 
-	private static final long serialVersionUID = 1593229997477L;
+	private static final long serialVersionUID = 1598401129619L;
 
 	private Integer uid;
 	private String uname;
@@ -21,7 +21,7 @@ public class Users implements Serializable {
 	private String usign;
 	private String uphonenumber;
 	private String uemail;
-	private String ulmage;
+	private String uimage;
 
 	public Integer getUid() {
 		return uid;
@@ -111,12 +111,12 @@ public class Users implements Serializable {
 		this.uemail = uemail;
 	}
 
-	public String getUlmage() {
-		return ulmage;
+	public String getUimage() {
+		return uimage;
 	}
 
-	public void setUlmage(String ulmage) {
-		this.ulmage = ulmage;
+	public void setUimage(String uimage) {
+		this.uimage = uimage;
 	}
 
 	public String toString() {
@@ -133,7 +133,7 @@ public class Users implements Serializable {
 		str.append(",usign=").append(usign);
 		str.append(",uphonenumber=").append(uphonenumber);
 		str.append(",uemail=").append(uemail);
-		str.append(",ulmage=").append(ulmage);
+		str.append(",uimage=").append(uimage);
 		str.append("]");
 		return str.toString();
 	}

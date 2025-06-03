@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 /**
  * @author Honey
- * Create on 2025-05-19 19:29:10
+ * Create on 2025-06-02 19:19:54
  */
 public class Relationship implements Serializable {
 
-	private static final long serialVersionUID = 1594574786689L;
+	private static final long serialVersionUID = 1599389574238L;
 
 	private Integer rid;
 	private Integer ruid;

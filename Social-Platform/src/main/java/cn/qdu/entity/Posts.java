@@ -4,24 +4,24 @@ import java.io.Serializable;
 
 /**
  * @author Honey
- * Create on 2025-05-19 19:29:10
+ * Create on 2025-06-02 19:19:54
  */
 public class Posts implements Serializable {
 
-	private static final long serialVersionUID = 1595227845839L;
+	private static final long serialVersionUID = 1598437741058L;
 
-	private Integer pld;
+	private Integer pid;
 	private Integer puid;
 	private String pmessage;
 	private String pdate;
 	private String pfile;
 
-	public Integer getPld() {
-		return pld;
+	public Integer getPid() {
+		return pid;
 	}
 
-	public void setPld(Integer pld) {
-		this.pld = pld;
+	public void setPid(Integer pid) {
+		this.pid = pid;
 	}
 
 	public Integer getPuid() {
@@ -59,7 +59,7 @@ public class Posts implements Serializable {
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 		str.append("Posts[");
-		str.append("pld=").append(pld);
+		str.append("pid=").append(pid);
 		str.append(",puid=").append(puid);
 		str.append(",pmessage=").append(pmessage);
 		str.append(",pdate=").append(pdate);

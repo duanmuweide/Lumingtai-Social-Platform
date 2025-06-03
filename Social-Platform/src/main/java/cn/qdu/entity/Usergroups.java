@@ -4,25 +4,25 @@ import java.io.Serializable;
 
 /**
  * @author Honey
- * Create on 2025-05-19 19:29:10
+ * Create on 2025-06-02 19:19:54
  */
 public class Usergroups implements Serializable {
 
-	private static final long serialVersionUID = 1590347354423L;
+	private static final long serialVersionUID = 1595414651230L;
 
-	private Integer gld;
+	private Integer gid;
 	private String gname;
 	private String gdate;
 	private String gimage;
 	private String gdescription;
 	private Integer gnumber;
 
-	public Integer getGld() {
-		return gld;
+	public Integer getGid() {
+		return gid;
 	}
 
-	public void setGld(Integer gld) {
-		this.gld = gld;
+	public void setGid(Integer gid) {
+		this.gid = gid;
 	}
 
 	public String getGname() {
@@ -68,7 +68,7 @@ public class Usergroups implements Serializable {
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 		str.append("Usergroups[");
-		str.append("gld=").append(gld);
+		str.append("gid=").append(gid);
 		str.append(",gname=").append(gname);
 		str.append(",gdate=").append(gdate);
 		str.append(",gimage=").append(gimage);
