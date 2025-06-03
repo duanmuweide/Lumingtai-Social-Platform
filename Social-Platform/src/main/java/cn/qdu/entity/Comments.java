@@ -4,25 +4,25 @@ import java.io.Serializable;
 
 /**
  * @author Honey
- * Create on 2025-05-19 19:29:10
+ * Create on 2025-06-02 19:19:54
  */
 public class Comments implements Serializable {
 
-	private static final long serialVersionUID = 1591136780679L;
+	private static final long serialVersionUID = 1597221071415L;
 
-	private Integer cld;
+	private Integer cid;
 	private Integer cuid;
 	private Boolean clike;
 	private String cfile;
 	private String cmessage;
 	private String cdate;
 
-	public Integer getCld() {
-		return cld;
+	public Integer getCid() {
+		return cid;
 	}
 
-	public void setCld(Integer cld) {
-		this.cld = cld;
+	public void setCid(Integer cid) {
+		this.cid = cid;
 	}
 
 	public Integer getCuid() {
@@ -68,7 +68,7 @@ public class Comments implements Serializable {
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 		str.append("Comments[");
-		str.append("cld=").append(cld);
+		str.append("cid=").append(cid);
 		str.append(",cuid=").append(cuid);
 		str.append(",clike=").append(clike);
 		str.append(",cfile=").append(cfile);

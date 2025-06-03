@@ -1,4 +1,4 @@
-package cn.qdu.util;
+package cn.qdu.service;
 
 import cn.qdu.dao.UserDao;
 import cn.qdu.entity.Users;

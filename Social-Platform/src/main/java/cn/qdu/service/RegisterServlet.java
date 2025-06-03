@@ -1,7 +1,8 @@
-package cn.qdu.util;
+package cn.qdu.service;
 
 import cn.qdu.dao.UserDao;
 import cn.qdu.entity.Users;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-import java.util.UUID;
 
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
