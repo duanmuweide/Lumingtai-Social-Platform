@@ -1,7 +1,3 @@
-import cn.qdu.entity.Users;
-import org.teasoft.bee.osql.api.Suid;
-import org.teasoft.honey.osql.shortcut.BF;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,15 +18,6 @@ public class login extends HttpServlet {
         out.println("<html>");
         out.println("<head>");
         out.println("<h1>" + username + "</h1>");
-        Suid suid = BF.getSuid();
-        Users user = new Users();
-        user.setUid(2);
-        user.setUname("czm");
-        user.setUpwd("123456");
-
-//        Date sqlDate = new Date(new java.util.Date().getTime());
-        user.setUbirthday("2005-1-1");
-        suid.update(user);
 
     }
     public void doPost(HttpServletRequest request, HttpServletResponse response)

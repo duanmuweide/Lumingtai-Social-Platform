@@ -4,24 +4,24 @@ import java.io.Serializable;
 
 /**
  * @author Honey
- * Create on 2025-05-19 19:29:10
+ * Create on 2025-06-02 19:19:54
  */
 public class Groupspeople implements Serializable {
 
-	private static final long serialVersionUID = 1599324770404L;
+	private static final long serialVersionUID = 1594956413867L;
 
-	private Integer gpld;
+	private Integer gpid;
 	private Integer gpuid;
 	private String gpname;
 	private String gpdate;
 	private Integer gpidentity;
 
-	public Integer getGpld() {
-		return gpld;
+	public Integer getGpid() {
+		return gpid;
 	}
 
-	public void setGpld(Integer gpld) {
-		this.gpld = gpld;
+	public void setGpid(Integer gpid) {
+		this.gpid = gpid;
 	}
 
 	public Integer getGpuid() {
@@ -59,7 +59,7 @@ public class Groupspeople implements Serializable {
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 		str.append("Groupspeople[");
-		str.append("gpld=").append(gpld);
+		str.append("gpid=").append(gpid);
 		str.append(",gpuid=").append(gpuid);
 		str.append(",gpname=").append(gpname);
 		str.append(",gpdate=").append(gpdate);
