@@ -33,8 +33,10 @@ public class testlogin {
         UserDao userDao = new UserDao();
 //        userDao.update(user);
 //        System.out.println(user.getUid());
-        List<Users> list = userDao.selectOne("admin");
-        System.out.println(list);
-
+        List<Users> list = userDao.selectByMany("admin", "111111", "2005-1-1");
+        System.out.println(list.size());
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(list.get(i));
+        }
     }
 }
