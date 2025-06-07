@@ -10,6 +10,7 @@ public class Users implements Serializable {
 
 	private static final long serialVersionUID = 1598401129619L;
 
+
 	private Integer uid;
 	private String uname;
 	private String upwd;
@@ -138,3 +139,4 @@ public class Users implements Serializable {
 		return str.toString();
 	}
 }
+
