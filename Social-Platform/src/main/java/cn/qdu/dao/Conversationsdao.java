@@ -2,9 +2,11 @@ package cn.qdu.dao;
 
 
 import cn.qdu.entity.Conversations;
+import cn.qdu.entity.Groupsconversations;
+import cn.qdu.entity.Usergroups;
 import org.teasoft.bee.osql.Op;
-import org.teasoft.bee.osql.api.Condition;
 import org.teasoft.bee.osql.api.Suid;
+import org.teasoft.bee.osql.api.Condition;
 import org.teasoft.honey.osql.shortcut.BF;
 
 import java.util.List;
@@ -16,7 +18,7 @@ public class Conversationsdao {
         return suid.insert(conversations) > 0 ? 1 : 0;
     }
 
-    //群消息的删除函数，成功返回1，否则返回0
+    //消息的删除函数，成功返回1，否则返回0
     public int delete(int id) {
         Suid suid = BF.getSuid();
         // 1. 先查询实体是否存在
@@ -28,7 +30,7 @@ public class Conversationsdao {
         return suid.delete(conversations) > 0 ? 1 : 0;
     }
 
-    //群消息根据id查询，成功返回消息，否则返回null
+    //消息根据id查询，成功返回消息，否则返回null
     public Conversations select(int id) {
         Suid suid = BF.getSuid();
         Condition condition = BF.getCondition();

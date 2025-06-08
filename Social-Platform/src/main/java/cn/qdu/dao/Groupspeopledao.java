@@ -1,19 +1,63 @@
 package cn.qdu.dao;
 
 import cn.qdu.entity.Groupspeople;
+import cn.qdu.entity.Usergroups;
 import org.teasoft.bee.osql.Op;
 import org.teasoft.bee.osql.api.Condition;
 import org.teasoft.bee.osql.api.Suid;
 import org.teasoft.honey.osql.shortcut.BF;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 public class Groupspeopledao {
     //群成员的插入函数，成功返回1，否则返回0
     public int insert(Groupspeople groupspeople) {
         Suid suid = BF.getSuid();
-        return suid.insert(groupspeople) > 0 ? 1 : 0;
+        if(suid.insert(groupspeople)>0){
+            //插入群成员后群的人数要加一
+            Usergroupsdao usergroupsdao = new Usergroupsdao();
+            Usergroups usergroups=usergroupsdao.select(groupspeople.getGpid());
+            usergroups.setGnumber(usergroups.getGnumber()+1);
+            usergroupsdao.update(usergroups);
+            return 1;
+        }else{
+            return 0;
+        }
     }
+
+    //更新群成员的群昵称和群身份，成功返回1，否则返回0
+    public int update(Groupspeople groupspeople) {
+        String url = "jdbc:mysql://127.0.0.1:3306/social_platform?characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai";
+        String username = "root";
+        String password = "root";
+
+        String sql = "UPDATE groupspeople SET gpname = ?, gpidentity = ? WHERE gpid = ? AND gpuid = ?";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // 设置所有可更新的参数
+            pstmt.setString(1, groupspeople.getGpname());
+            pstmt.setInt(2, groupspeople.getGpidentity());
+            pstmt.setInt(3,groupspeople.getGpid());
+            pstmt.setInt(4, groupspeople.getGpuid());
+
+
+            int affectedRows = pstmt.executeUpdate();
+
+            // 成功返回1，失败返回0
+            return affectedRows > 0 ? 1 : 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0; // 发生异常返回0表示失败
+        }
+    }
+
 
     // 群某个成员的删除函数，成功返回1，否则返回0
     public int deletepeople(int gid, int uid) {
@@ -26,7 +70,16 @@ public class Groupspeopledao {
         }
 
         // 2. 直接删除实体对象
-        return suid.delete(groupspeople) > 0 ? 1 : 0;
+        if(suid.delete(groupspeople)>0){
+            //删除群成员后群的人数要减一
+            Usergroupsdao usergroupsdao = new Usergroupsdao();
+            Usergroups usergroups=usergroupsdao.select(groupspeople.getGpid());
+            usergroups.setGnumber(usergroups.getGnumber()-1);
+            usergroupsdao.update(usergroups);
+            return 1;
+        }else{
+            return 0;
+        }
     }
 
     //群的删除
