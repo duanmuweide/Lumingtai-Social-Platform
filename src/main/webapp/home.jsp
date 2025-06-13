@@ -73,8 +73,8 @@
                         <li class="layui-nav-item">
                             <a href="javascript:;"><img src="${currentUser.ulimage != null ? currentUser.ulimage : 'https://unsplash.it/100/100?random'}" class="layui-nav-img">${currentUser.uname}</a>
                             <dl class="layui-nav-child">
-                                <dd><a href="javascript:;">个人主页</a></dd>
-                                <dd><a href="javascript:;">账号设置</a></dd>
+                                <dd><a href="javascript:">个人主页</a></dd>
+                                <dd><a href="javascript:">账号设置</a></dd>
                                 <dd><a href="${pageContext.request.contextPath}/logout">退出登录</a></dd>
                             </dl>
                         </li>
