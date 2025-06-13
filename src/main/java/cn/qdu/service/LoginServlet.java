@@ -33,15 +33,21 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
+            // 用户名长度和格式验证
+            if (username.length() < 3 || username.length() > 20) {
+                out.print("{\"success\": false, \"error\": \"用户名长度必须在3-20个字符之间\"}");
+                return;
+            }
+
             // 防止SQL注入：移除特殊字符
             username = username.replaceAll("[^a-zA-Z0-9_\\u4e00-\\u9fa5]", "");
-            
+
             // 调用 DAO 层验证登录
-            List<Users> users = userDao.selectOne(username);
+            List<Users> users = userDao.selectByName(username);
 
             if (users != null && !users.isEmpty()) {
                 Users user = users.get(0);
-                if (user.getUpwd().equals(password)) {
+                if (password.equals(user.getUpwd())) {  // 直接比较密码
                     // 创建新的会话
                     HttpSession oldSession = request.getSession(false);
                     if (oldSession != null) {
@@ -50,7 +56,7 @@ public class LoginServlet extends HttpServlet {
                     HttpSession newSession = request.getSession(true);
                     newSession.setMaxInactiveInterval(30 * 60);
                     newSession.setAttribute("user", user);
-                    
+
                     out.print("{\"success\": true}");
                 } else {
                     out.print("{\"success\": false, \"error\": \"密码错误\"}");
