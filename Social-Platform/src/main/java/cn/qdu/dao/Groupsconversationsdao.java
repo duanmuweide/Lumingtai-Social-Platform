@@ -1,10 +1,12 @@
 package cn.qdu.dao;
 
 
+import cn.qdu.entity.Groupspeople;
+import cn.qdu.entity.Usergroups;
 import cn.qdu.entity.Groupsconversations;
 import org.teasoft.bee.osql.Op;
-import org.teasoft.bee.osql.api.Condition;
 import org.teasoft.bee.osql.api.Suid;
+import org.teasoft.bee.osql.api.Condition;
 import org.teasoft.honey.osql.shortcut.BF;
 
 import java.util.List;
@@ -16,7 +18,7 @@ public class Groupsconversationsdao {
         return suid.insert(groupsconversations) > 0 ? 1 : 0;
     }
 
-    //群消息的删除函数，成功返回1，否则返回0
+    //群某条消息的删除函数，成功返回1，否则返回0
     public int delete(int id) {
         Suid suid = BF.getSuid();
         // 1. 先查询实体是否存在
@@ -27,6 +29,17 @@ public class Groupsconversationsdao {
 
         return suid.delete(groupsconversations) > 0 ? 1 : 0;
     }
+
+    //群全部消息的删除，成功返回1，否则返回0
+    public int deleteall(int gid) {
+        Suid suid = BF.getSuid();
+        Condition condition = BF.getCondition();
+        condition.op("gcgid", Op.eq, gid);
+
+        int deletedCount = suid.delete(new Groupsconversations(), condition);
+        return deletedCount > 0 ? 1 : 0;
+    }
+
 
     //群消息根据id查询，成功返回所查询用户，否则返回null
     public Groupsconversations select(int id) {
@@ -55,7 +68,7 @@ public class Groupsconversationsdao {
         Suid suid = BF.getSuid();
         Condition condition = BF.getCondition();
 
-        condition.op("gcdate", Op.eq,"date");
+        condition.op("gcdate", Op.eq,date);
 
         List<Groupsconversations> result = suid.select(new Groupsconversations(), condition);
         return result.isEmpty() ? null : result;
