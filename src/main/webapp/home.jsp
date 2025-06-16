@@ -6,6 +6,13 @@
         response.sendRedirect(request.getContextPath() + "/login.jsp");
         return;
     }
+
+    String avatarPath;
+    if (currentUser.getUimage() != null) {
+        avatarPath = request.getContextPath() + "/" + currentUser.getUimage();
+    } else {
+        avatarPath = request.getContextPath() + "/static/images/default/default-wll.jpg";
+    }
 %>
 <!DOCTYPE html>
 <html>
@@ -95,6 +102,18 @@
             padding: 2px 6px;
             font-size: 12px;
         }
+        .image-square {
+            width: 100px;
+            height: 100px;
+            overflow: hidden;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .image-square img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body class="layui-layout-body">
@@ -110,13 +129,6 @@
                     <ul class="layui-nav" lay-filter="">
                         <li class="layui-nav-item layui-this"><a href="">首页</a></li>
                         <li class="layui-nav-item"><a href="">好友</a></li>
-                        <li class="layui-nav-item">
-                            <a href="javascript:;">消息<span class="layui-badge notification-badge">5</span></a>
-                            <dl class="layui-nav-child">
-                                <dd><a href="javascript:;">评论 <span class="layui-badge">3</span></a></dd>
-                                <dd><a href="javascript:;">私信 <span class="layui-badge">2</span></a></dd>
-                            </dl>
-                        </li>
                         <li class="layui-nav-item"><a href="">群组</a></li>
                     </ul>
                 </div>
@@ -124,13 +136,16 @@
                     <ul class="layui-nav" lay-filter="">
                         <li class="layui-nav-item">
                             <a href="javascript:;">
-                                <img src="${currentUser.uimage != null ? currentUser.uimage : 'static/images/default-avatar.png'}" class="layui-nav-img">${currentUser.uname}
+                                <img src="<%= avatarPath %>" class="layui-nav-img">${currentUser.uname}
                             </a>
-                            <dl class="layui-nav-child">
-                                <dd><a href="javascript:;">个人主页</a></dd>
-                                <dd><a href="javascript:;">账号设置</a></dd>
-                                <dd><a href="${pageContext.request.contextPath}/logout">退出登录</a></dd>
-                            </dl>
+                        </li>
+                        <li class="layui-nav-item">
+                            <a href="javascript:;">ID: ${currentUser.uid}</a>
+                        </li>
+                        <li class="layui-nav-item">
+                            <a href="${pageContext.request.contextPath}/logout" class="layui-btn layui-btn-danger layui-btn-sm">
+                                <i class="layui-icon layui-icon-logout"></i> 退出登录
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -145,12 +160,19 @@
             <div class="layui-col-md3">
                 <div class="layui-card">
                     <div class="layui-card-body user-card">
-                        <img src="${currentUser.uimage != null ? currentUser.uimage : 'static/images/default-avatar.png'}" class="user-avatar">
+                        <img src="<%= avatarPath %>" class="user-avatar">
                         <h3>${currentUser.uname}</h3>
-                        <p class="layui-text">${currentUser.usign}</p>
-                        <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-primary">关注 <span class="layui-badge layui-bg-gray">58</span></button>
-                            <button class="layui-btn layui-btn-primary">粉丝 <span class="layui-badge layui-bg-gray">128</span></button>
+                        <p class="layui-text">${currentUser.usign != null ? currentUser.usign : '这个人很懒，什么都没写~'}</p>
+                        <div class="user-info">
+                            <p><i class="layui-icon layui-icon-email"></i> ${currentUser.uemail != null ? currentUser.uemail : '未设置'}</p>
+                            <p><i class="layui-icon layui-icon-user"></i> ${currentUser.ugender != null ? (currentUser.ugender ? '男' : '女') : '未设置'}</p>
+                            <p><i class="layui-icon layui-icon-date"></i> ${currentUser.ubirthday != null ? currentUser.ubirthday : '未设置'}</p>
+                            <p><i class="layui-icon layui-icon-star"></i> ${currentUser.uhobby != null ? currentUser.uhobby : '未设置'}</p>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <a href="editProfile.jsp" class="layui-btn layui-btn-normal layui-btn-sm">
+                                <i class="layui-icon layui-icon-edit"></i> 编辑资料
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -280,66 +302,99 @@
 
         // 加载动态列表
         function loadPosts() {
-            $.get('${pageContext.request.contextPath}/posts', function(res){
-                if(res.success){
-                    var html = '';
-                    res.data.forEach(function(post){
-                        html += `
-                        <div class="post-item">
-                            <div class="post-header">
-                                <img src="${post.userImage || 'static/images/default-avatar.png'}" class="layui-nav-img">
-                                <span>${post.userName}</span>
-                                <span class="layui-badge-rim">${post.time}</span>
+            $.ajax({
+                url: '${pageContext.request.contextPath}/posts',
+                type: 'GET',
+                success: function(res) {
+                    if(res.success && res.data && res.data.length > 0) {
+                        var html = '';
+                        res.data.forEach(function(post) {
+                            var imageHtml = '';
+                            if (post.image && post.image.trim() !== '') {
+                                imageHtml = '<div class="image-square"><img src="${pageContext.request.contextPath}/' + post.image + '" alt="动态图片"></div>';
+                            }
+                            
+                            var userImage = post.userImage || 'static/images/default/default-wll.jpg';
+                            var userName = post.userName || '未知用户';
+                            var content = post.content || '';
+                            var time = post.time || '';
+                            
+                            html += `
+                            <div class="post-item">
+                                <div class="post-header">
+                                    <img src="${pageContext.request.contextPath}/${userImage}" class="layui-nav-img">
+                                    <span style="margin-left: 10px;">${userName}</span>
+                                    <span class="layui-badge-rim" style="margin-left: 10px;">${time}</span>
+                                </div>
+                                <div class="post-content" style="margin: 15px 0; white-space: pre-wrap;">${content}</div>
+                                ${imageHtml}
+                                <div class="post-actions">
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm">
+                                        <i class="layui-icon layui-icon-praise"></i> 点赞
+                                    </button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm">
+                                        <i class="layui-icon layui-icon-reply-fill"></i> 评论
+                                    </button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm">
+                                        <i class="layui-icon layui-icon-share"></i> 分享
+                                    </button>
+                                </div>
                             </div>
-                            <div class="post-content">${post.content}</div>
-                            ${post.image ? `<img src="${post.image}" class="post-image">` : ''}
-                            <div class="post-actions">
-                                <button class="layui-btn layui-btn-primary layui-btn-sm">
-                                    <i class="layui-icon layui-icon-praise"></i> 点赞
-                                </button>
-                                <button class="layui-btn layui-btn-primary layui-btn-sm">
-                                    <i class="layui-icon layui-icon-reply-fill"></i> 评论
-                                </button>
-                                <button class="layui-btn layui-btn-primary layui-btn-sm">
-                                    <i class="layui-icon layui-icon-share"></i> 分享
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    });
-                    $('#postList').html(html);
+                            `;
+                        });
+                        $('#postList').html(html);
+                    } else {
+                        $('#postList').html('<div class="layui-card-body">暂无动态</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('加载动态失败:', error);
+                    layer.msg('加载动态失败，请刷新页面重试', {icon: 2});
                 }
             });
         }
 
         // 加载好友列表
         function loadFriends() {
-            $.get('${pageContext.request.contextPath}/friends', function(res){
-                if(res.success){
-                    var html = '';
-                    res.data.forEach(function(friend){
-                        html += `
-                        <div class="friend-item">
-                            <img src="${friend.image || 'static/images/default-avatar.png'}" class="friend-avatar">
-                            <span>${friend.name}</span>
-                            <span class="layui-badge-dot ${friend.online ? 'layui-bg-green' : 'layui-bg-gray'}" style="margin-left: 5px;"></span>
-                        </div>
-                    `;
-                    });
-                    $('#friendList').html(html);
+            $.ajax({
+                url: '${pageContext.request.contextPath}/friends',
+                type: 'GET',
+                success: function(res) {
+                    if(res.success && res.data) {
+                        var html = '';
+                        res.data.forEach(function(friend) {
+                            var friendImage = friend.image || 'static/images/default/default-wll.jpg';
+                            html += `
+                            <div class="friend-item">
+                                <img src="${pageContext.request.contextPath}/${friendImage}" class="friend-avatar">
+                                <span style="margin-left: 10px;">${friend.name || '未知用户'}</span>
+                                <span class="layui-badge-dot ${friend.online ? 'layui-bg-green' : 'layui-bg-gray'}" style="margin-left: 5px;"></span>
+                            </div>
+                            `;
+                        });
+                        $('#friendList').html(html);
+                    } else {
+                        $('#friendList').html('<div class="layui-card-body">暂无好友</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('加载好友列表失败:', error);
+                    $('#friendList').html('<div class="layui-card-body">加载好友列表失败</div>');
                 }
             });
         }
 
-        // 初始加载
-        loadPosts();
-        loadFriends();
+        // 延迟加载非关键内容
+        setTimeout(function() {
+            loadPosts();
+            loadFriends();
+        }, 100);
 
-        // 定时刷新
+        // 定时刷新，但降低频率
         setInterval(function(){
             loadPosts();
             loadFriends();
-        }, 30000); // 每30秒刷新一次
+        }, 60000); // 每60秒刷新一次
     });
 </script>
 </body>

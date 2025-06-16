@@ -120,4 +120,17 @@ public class PostDao {
         }
     }
 
+    public List<Posts> selectAll() {
+        Suid suid = BF.getSuid();
+        Posts posts = new Posts();
+        List<Posts> list = suid.select(posts);
+        if (list.size() > 0) {
+            System.out.println("查询成功");
+            return list;
+        } else {
+            System.out.println("没有记录");
+            return null;
+        }
+    }
+
 }
