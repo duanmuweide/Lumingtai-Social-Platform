@@ -98,13 +98,13 @@ public class RegisterServlet extends HttpServlet {
                 }
 
                 String fileName = UUID.randomUUID().toString() + getFileExtension(filePart);
-                String uploadPath = getServletContext().getRealPath("/uploads");
+                String uploadPath = getServletContext().getRealPath("/static/images/avatars");
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
-                    uploadDir.mkdir();
+                    uploadDir.mkdirs();
                 }
                 filePart.write(uploadPath + File.separator + fileName);
-                imagePath = "uploads/" + fileName;
+                imagePath = "static/images/avatars/" + fileName;
             }
 
             // 创建新用户
