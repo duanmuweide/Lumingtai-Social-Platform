@@ -109,7 +109,7 @@
                 <div class="layui-col-md6">
                     <ul class="layui-nav" lay-filter="">
                         <li class="layui-nav-item layui-this"><a href="">首页</a></li>
-                        <li class="layui-nav-item"><a href="">好友</a></li>
+                        <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/friends.jsp">好友</a></li>
                         <li class="layui-nav-item">
                             <a href="javascript:;">消息<span class="layui-badge notification-badge">5</span></a>
                             <dl class="layui-nav-child">
@@ -284,28 +284,29 @@
                 if(res.success){
                     var html = '';
                     res.data.forEach(function(post){
+                        var imageHtml = post.image ? '&lt;img src="' + post.image + '" class="post-image"&gt;' : '';
                         html += `
-                        <div class="post-item">
-                            <div class="post-header">
-                                <img src="${post.userImage || 'static/images/default-avatar.png'}" class="layui-nav-img">
-                                <span>${post.userName}</span>
-                                <span class="layui-badge-rim">${post.time}</span>
-                            </div>
-                            <div class="post-content">${post.content}</div>
-                            ${post.image ? `<img src="${post.image}" class="post-image">` : ''}
-                            <div class="post-actions">
-                                <button class="layui-btn layui-btn-primary layui-btn-sm">
-                                    <i class="layui-icon layui-icon-praise"></i> 点赞
-                                </button>
-                                <button class="layui-btn layui-btn-primary layui-btn-sm">
-                                    <i class="layui-icon layui-icon-reply-fill"></i> 评论
-                                </button>
-                                <button class="layui-btn layui-btn-primary layui-btn-sm">
-                                    <i class="layui-icon layui-icon-share"></i> 分享
-                                </button>
-                            </div>
-                        </div>
-                    `;
+                &lt;div class="post-item"&gt;
+                    &lt;div class="post-header"&gt;
+                        &lt;img src="${post.userImage || 'static/images/default-avatar.png'}" class="layui-nav-img"&gt;
+                        &lt;span&gt;${post.userName}&lt;/span&gt;
+                        &lt;span class="layui-badge-rim"&gt;${post.time}&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class="post-content"&gt;${post.content}&lt;/div&gt;
+                    ${imageHtml}
+                    &lt;div class="post-actions"&gt;
+                        &lt;button class="layui-btn layui-btn-primary layui-btn-sm"&gt;
+                            &lt;i class="layui-icon layui-icon-praise"&gt;&lt;/i&gt; 点赞
+                        &lt;/button&gt;
+                        &lt;button class="layui-btn layui-btn-primary layui-btn-sm"&gt;
+                            &lt;i class="layui-icon layui-icon-reply-fill"&gt;&lt;/i&gt; 评论
+                        &lt;/button&gt;
+                        &lt;button class="layui-btn layui-btn-primary layui-btn-sm"&gt;
+                            &lt;i class="layui-icon layui-icon-share"&gt;&lt;/i&gt; 分享
+                        &lt;/button&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                `;
                     });
                     $('#postList').html(html);
                 }

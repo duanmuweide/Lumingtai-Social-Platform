@@ -11,10 +11,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class RelationshipDao {
-    public void insert(Relationship relationship){
+    public boolean insert(Relationship relationship){
         Suid suid = BF.getSuid();
-        suid.insert(relationship);
+        int cnt = suid.insert(relationship);
         System.out.println("插入成功!");
+        return cnt > 0;
     }
 
     public void delete(Relationship relationship){
@@ -89,6 +90,15 @@ public class RelationshipDao {
         List<Relationship> list = suid.select(rel);
         if (list.size() > 0) {System.out.println("查询成功"); return list;}
         else {System.out.println("没有记录"); return null;}
+    }
+
+    public List<Relationship> selectByManytwoid(Integer uid, Integer friendid){
+        Suid suid = BF.getSuid();
+        Relationship rel = new Relationship();
+        rel.setRuid(uid);
+        rel.setRfiendid(friendid);
+        List<Relationship> list = suid.select(rel);
+        return list;
     }
 
 }
