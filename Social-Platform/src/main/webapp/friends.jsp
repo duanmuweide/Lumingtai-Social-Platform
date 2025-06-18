@@ -112,9 +112,9 @@
         </div>
         <div class="layui-col-md6">
           <ul class="layui-nav" lay-filter="">
-            <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/index.jsp">首页</a></li>
+            <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/home.jsp">首页</a></li>
             <li class="layui-nav-item layui-this"><a href="">好友</a></li>
-            <li class="layui-nav-item"><a href="">消息</a></li>
+            <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/message_requests.jsp">消息</a></li>
             <li class="layui-nav-item"><a href="">群组</a></li>
           </ul>
         </div>
