@@ -2,6 +2,8 @@ package cn.qdu.dao;
 
 import cn.qdu.entity.Relationship;
 import cn.qdu.util.connection;
+import org.teasoft.bee.osql.Op;
+import org.teasoft.bee.osql.api.Condition;
 import org.teasoft.bee.osql.api.Suid;
 import org.teasoft.honey.osql.shortcut.BF;
 
@@ -89,6 +91,25 @@ public class RelationshipDao {
         List<Relationship> list = suid.select(rel);
         if (list.size() > 0) {System.out.println("查询成功"); return list;}
         else {System.out.println("没有记录"); return null;}
+    }
+
+
+    // 在RelationshipDao类中添加更完整的查询方法
+    public List<Relationship> getFriends(int userId) {
+        Suid suid = BF.getSuid();
+        Condition condition = BF.getCondition();
+
+        // 查询当前用户的好友关系（rtype=1表示好友关系）
+        condition.op("ruid", Op.eq, userId)
+                .op("rtype", Op.eq, 1);
+
+        return suid.select(new Relationship(), condition);
+    }
+
+    // 同时保留原有的select方法
+    public List<Relationship> select(Relationship relationship) {
+        Suid suid = BF.getSuid();
+        return suid.select(relationship);
     }
 
 }

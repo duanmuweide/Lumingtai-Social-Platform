@@ -63,7 +63,7 @@
                 <div class="layui-col-md6">
                     <ul class="layui-nav" lay-filter="">
                         <li class="layui-nav-item layui-this"><a href="">首页</a></li>
-                        <li class="layui-nav-item"><a href="">好友</a></li>
+                        <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/chat">好友</a></li>
                         <li class="layui-nav-item"><a href="">消息</a></li>
                         <li class="layui-nav-item"><a href="">群组</a></li>
                     </ul>
@@ -183,13 +183,13 @@ layui.use(['element', 'layer', 'form'], function(){
     var element = layui.element;
     var layer = layui.layer;
     var form = layui.form;
-    
+
     // 显示欢迎消息
     layer.msg('欢迎回来！', {icon: 1});
-    
+
     // 初始化导航栏
     element.render('nav');
-    
+
     // 发布动态
     document.querySelector('.post-box .layui-btn').onclick = function(){
         var content = document.querySelector('.post-box textarea').value;
@@ -204,4 +204,4 @@ layui.use(['element', 'layer', 'form'], function(){
 });
 </script>
 </body>
-</html> 
+</html>
