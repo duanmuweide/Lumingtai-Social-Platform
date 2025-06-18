@@ -8,11 +8,23 @@
     }
 
     String avatarPath;
-    if (currentUser.getUimage() != null) {
+    if (currentUser.getUimage() != null && !currentUser.getUimage().isEmpty()) {
         avatarPath = request.getContextPath() + "/" + currentUser.getUimage();
     } else {
         avatarPath = request.getContextPath() + "/static/images/default/default-wll.jpg";
     }
+    
+    // 调试信息
+    System.out.println("=== 当前用户信息 ===");
+    System.out.println("用户ID: " + currentUser.getUid());
+    System.out.println("用户名: " + currentUser.getUname());
+    System.out.println("个性签名: " + currentUser.getUsign());
+    System.out.println("手机号: " + currentUser.getUphonenumber());
+    System.out.println("邮箱: " + currentUser.getUemail());
+    System.out.println("性别: " + currentUser.getUgender());
+    System.out.println("生日: " + currentUser.getUbirthday());
+    System.out.println("兴趣爱好: " + currentUser.getUhobby());
+    System.out.println("头像: " + currentUser.getUimage());
 %>
 <!DOCTYPE html>
 <html>
@@ -44,6 +56,11 @@
             margin: 0 auto 10px;
             overflow: hidden;
             position: relative;
+            cursor: pointer;
+            border: 2px solid #ddd;
+        }
+        .avatar-preview:hover {
+            border-color: #1E9FFF;
         }
         .avatar-preview img {
             width: 100%;
@@ -91,56 +108,44 @@
         <div class="layui-form-item">
             <label class="layui-form-label">用户名</label>
             <div class="layui-input-block">
-                <input type="text" name="uname" value="${currentUser.uname}" class="layui-input" readonly>
+                <input type="text" name="uname" value="<%= currentUser.getUname() != null ? currentUser.getUname() : "" %>" placeholder="请输入用户名" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">个性签名</label>
             <div class="layui-input-block">
-                <input type="text" name="usign" value="${currentUser.usign}" placeholder="请输入个性签名" class="layui-input">
+                <input type="text" name="usign" value="<%= currentUser.getUsign() != null ? currentUser.getUsign() : "" %>" placeholder="请输入个性签名" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">手机号</label>
             <div class="layui-input-block">
-                <input type="text" name="uphonenumber" value="${currentUser.uphonenumber}" lay-verify="phone" placeholder="请输入手机号" class="layui-input">
+                <input type="text" name="uphonenumber" value="<%= currentUser.getUphonenumber() != null ? currentUser.getUphonenumber() : "" %>" lay-verify="phone" placeholder="请输入手机号" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">邮箱</label>
             <div class="layui-input-block">
-                <input type="text" name="uemail" value="${currentUser.uemail}" lay-verify="email" placeholder="请输入邮箱" class="layui-input">
+                <input type="text" name="uemail" value="<%= currentUser.getUemail() != null ? currentUser.getUemail() : "" %>" lay-verify="email" placeholder="请输入邮箱" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">性别</label>
             <div class="layui-input-block">
-                <input type="radio" name="ugender" value="true" title="男" ${currentUser.ugender ? 'checked' : ''}>
-                <input type="radio" name="ugender" value="false" title="女" ${!currentUser.ugender ? 'checked' : ''}>
+                <input type="radio" name="ugender" value="true" title="男" <%= currentUser.getUgender() != null && currentUser.getUgender() ? "checked" : "" %>>
+                <input type="radio" name="ugender" value="false" title="女" <%= currentUser.getUgender() != null && !currentUser.getUgender() ? "checked" : "" %>>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">生日</label>
             <div class="layui-input-block">
-                <input type="text" name="ubirthday" value="${currentUser.ubirthday != null ? currentUser.ubirthday : ''}" id="birthday" placeholder="请选择生日" class="layui-input">
+                <input type="text" name="ubirthday" value="<%= currentUser.getUbirthday() != null ? currentUser.getUbirthday() : "" %>" id="birthday" placeholder="请选择生日" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">兴趣爱好</label>
             <div class="layui-input-block">
-                <input type="text" name="uhobby" value="${currentUser.uhobby != null ? currentUser.uhobby : ''}" placeholder="请输入兴趣爱好" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">密保问题</label>
-            <div class="layui-input-block">
-                <input type="text" name="uquestion" value="${currentUser.uquestion}" placeholder="请输入密保问题" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">密保答案</label>
-            <div class="layui-input-block">
-                <input type="text" name="uanswer" value="${currentUser.uanswer}" placeholder="请输入密保答案" class="layui-input">
+                <input type="text" name="uhobby" value="<%= currentUser.getUhobby() != null ? currentUser.getUhobby() : "" %>" placeholder="请输入兴趣爱好" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -211,6 +216,9 @@
                     } else {
                         layer.msg(res.error || '修改失败', {icon: 2});
                     }
+                },
+                error: function() {
+                    layer.msg('网络错误，请重试', {icon: 2});
                 }
             });
             return false;

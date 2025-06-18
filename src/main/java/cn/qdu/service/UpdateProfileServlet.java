@@ -41,14 +41,19 @@ public class UpdateProfileServlet extends HttpServlet {
             }
 
             // 获取表单数据
+            String uname = request.getParameter("uname");
             String usign = request.getParameter("usign");
             String uphonenumber = request.getParameter("uphonenumber");
             String uemail = request.getParameter("uemail");
             String ugender = request.getParameter("ugender");
             String ubirthday = request.getParameter("ubirthday");
             String uhobby = request.getParameter("uhobby");
-            String uquestion = request.getParameter("uquestion");
-            String uanswer = request.getParameter("uanswer");
+
+            // 验证用户名不能为空
+            if (uname == null || uname.trim().isEmpty()) {
+                out.print("{\"success\": false, \"error\": \"用户名不能为空\"}");
+                return;
+            }
 
             // 处理头像上传
             String imagePath = null;
@@ -81,14 +86,13 @@ public class UpdateProfileServlet extends HttpServlet {
             }
 
             // 更新用户信息
+            currentUser.setUname(uname.trim());
             currentUser.setUsign(usign);
             currentUser.setUphonenumber(uphonenumber);
             currentUser.setUemail(uemail);
             currentUser.setUgender(Boolean.parseBoolean(ugender));
             currentUser.setUbirthday(ubirthday);
             currentUser.setUhobby(uhobby);
-            currentUser.setUquestion(uquestion);
-            currentUser.setUanswer(uanswer);
             if (imagePath != null) {
                 currentUser.setUimage(imagePath);
             }

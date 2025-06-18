@@ -28,7 +28,7 @@ public class PostDao {
         connection con = new connection();
         Connection connect = con.getConnection();
 
-        String sql = "UPDATE relationship SET puid = ?,pmessage = ?, pdate= ?, pfile = ? WHERE pid = ?";
+        String sql = "UPDATE posts SET puid = ?, pmessage = ?, pdate = ?, pfile = ? WHERE pid = ?";
 
         PreparedStatement ps = connect.prepareStatement(sql);
 
@@ -57,6 +57,20 @@ public class PostDao {
             return list;
         } else {
             System.out.println("没有记录");
+            return null;
+        }
+    }
+
+    public List<Posts> selectByPid(Integer pid) {
+        Suid suid = BF.getSuid();
+        Posts posts = new Posts();
+        posts.setPid(pid);
+        List<Posts> list = suid.select(posts);
+        if (list.size() > 0) {
+            System.out.println("根据ID查询成功");
+            return list;
+        } else {
+            System.out.println("没有找到该帖子");
             return null;
         }
     }

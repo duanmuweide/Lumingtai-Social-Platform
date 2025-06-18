@@ -49,30 +49,31 @@ public class PublishPostServlet extends HttpServlet {
             try {
                 Part filePart = request.getPart("image");
                 if (filePart != null && filePart.getSize() > 0) {
-                    // 获取项目根目录
-                    String projectRoot = request.getServletContext().getRealPath("/");
-                    // 设置上传目录
-                    String uploadDir = projectRoot + "static/images/posts";
-                    // 确保目录存在
-                    File uploadDirFile = new File(uploadDir);
-                    if (!uploadDirFile.exists()) {
-                        uploadDirFile.mkdirs();
-                    }
-
-                    // 生成唯一文件名
                     String fileName = UUID.randomUUID().toString() + getFileExtension(filePart);
-                    String filePath = uploadDir + File.separator + fileName;
+                    String uploadPath = getServletContext().getRealPath("/static/images/posts");
+                    File uploadDir = new File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdirs();
+                    }
                     
-                    // 保存文件
-                    filePart.write(filePath);
+                    // 添加调试信息
+                    System.out.println("上传路径: " + uploadPath);
+                    System.out.println("文件名: " + fileName);
+                    System.out.println("完整路径: " + uploadPath + File.separator + fileName);
+                    System.out.println("目录是否存在: " + uploadDir.exists());
+                    System.out.println("目录是否可写: " + uploadDir.canWrite());
                     
-                    // 设置图片路径（相对于webapp目录）
+                    filePart.write(uploadPath + File.separator + fileName);
                     imagePath = "static/images/posts/" + fileName;
                     
-                    System.out.println("图片已保存到: " + filePath);
+                    // 验证文件是否成功保存
+                    File savedFile = new File(uploadPath + File.separator + fileName);
+                    System.out.println("文件是否保存成功: " + savedFile.exists());
+                    System.out.println("文件大小: " + savedFile.length());
                 }
             } catch (Exception e) {
                 System.out.println("处理图片上传时出错: " + e.getMessage());
+                e.printStackTrace();
                 // 图片上传失败不影响帖子发布
             }
 
