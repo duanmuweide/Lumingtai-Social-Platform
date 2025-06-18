@@ -28,7 +28,7 @@ public class PostDao {
         connection con = new connection();
         Connection connect = con.getConnection();
 
-        String sql = "UPDATE relationship SET puid = ?,pmessage = ?, pdate= ?, pfile = ? WHERE pid = ?";
+        String sql = "UPDATE posts SET puid = ?,pmessage = ?, pdate= ?, pfile = ? WHERE pid = ?";
 
         PreparedStatement ps = connect.prepareStatement(sql);
 
