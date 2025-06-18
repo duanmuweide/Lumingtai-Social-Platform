@@ -114,6 +114,27 @@
             height: 100%;
             object-fit: cover;
         }
+        .comment-section {
+            background: #fafafa;
+            border-radius: 4px;
+            padding: 15px;
+        }
+        .comment-item {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .comment-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .like-btn.layui-btn-danger {
+            background-color: #FF5722;
+            border-color: #FF5722;
+        }
+        .comment-textarea {
+            resize: none;
+        }
     </style>
 </head>
 <body class="layui-layout-body">
@@ -130,6 +151,7 @@
                         <li class="layui-nav-item layui-this"><a href="">首页</a></li>
                         <li class="layui-nav-item"><a href="">好友</a></li>
                         <li class="layui-nav-item"><a href="">群组</a></li>
+                        <li class="layui-nav-item"><a href="messages.jsp">消息</a></li>
                     </ul>
                 </div>
                 <div class="layui-col-md3">
@@ -306,9 +328,12 @@
                 url: '${pageContext.request.contextPath}/posts',
                 type: 'GET',
                 success: function(res) {
+                    console.log('收到响应:', res); // 调试信息
                     if(res.success && res.data && res.data.length > 0) {
+                        console.log('找到 ' + res.data.length + ' 条动态'); // 调试信息
                         var html = '';
-                        res.data.forEach(function(post) {
+                        res.data.forEach(function(post, index) {
+                            console.log('处理第 ' + (index + 1) + ' 条动态:', post); // 调试信息
                             var imageHtml = '';
                             if (post.image && post.image.trim() !== '') {
                                 imageHtml = '<div class="image-square"><img src="${pageContext.request.contextPath}/' + post.image + '" alt="动态图片"></div>';
@@ -318,38 +343,242 @@
                             var userName = post.userName || '未知用户';
                             var content = post.content || '';
                             var time = post.time || '';
+                            var likeCount = post.likeCount || 0;
+                            var commentCount = post.commentCount || 0;
+                            var userLiked = post.userLiked || false;
                             
-                            html += `
-                            <div class="post-item">
-                                <div class="post-header">
-                                    <img src="${pageContext.request.contextPath}/${userImage}" class="layui-nav-img">
-                                    <span style="margin-left: 10px;">${userName}</span>
-                                    <span class="layui-badge-rim" style="margin-left: 10px;">${time}</span>
-                                </div>
-                                <div class="post-content" style="margin: 15px 0; white-space: pre-wrap;">${content}</div>
-                                ${imageHtml}
-                                <div class="post-actions">
-                                    <button class="layui-btn layui-btn-primary layui-btn-sm">
-                                        <i class="layui-icon layui-icon-praise"></i> 点赞
-                                    </button>
-                                    <button class="layui-btn layui-btn-primary layui-btn-sm">
-                                        <i class="layui-icon layui-icon-reply-fill"></i> 评论
-                                    </button>
-                                    <button class="layui-btn layui-btn-primary layui-btn-sm">
-                                        <i class="layui-icon layui-icon-share"></i> 分享
-                                    </button>
-                                </div>
-                            </div>
-                            `;
+                            console.log('用户图片:', userImage); // 调试信息
+                            console.log('用户名:', userName); // 调试信息
+                            console.log('内容:', content); // 调试信息
+                            console.log('时间:', time); // 调试信息
+                            console.log('点赞数:', likeCount); // 调试信息
+                            console.log('评论数:', commentCount); // 调试信息
+                            console.log('用户已点赞:', userLiked); // 调试信息
+                            
+                            // 根据用户点赞状态设置按钮样式
+                            var likeBtnClass = userLiked ? 'layui-btn-danger' : 'layui-btn-primary';
+                            
+                            html += '<div class="post-item" data-post-id="' + post.id + '">' +
+                                '<div class="post-header">' +
+                                '<img src="${pageContext.request.contextPath}/' + userImage + '" class="layui-nav-img">' +
+                                '<span style="margin-left: 10px;">' + userName + '</span>' +
+                                '<span class="layui-badge-rim" style="margin-left: 10px;">' + time + '</span>' +
+                                '</div>' +
+                                '<div class="post-content" style="margin: 15px 0; white-space: pre-wrap;">' + content + '</div>' +
+                                imageHtml +
+                                '<div class="post-actions">' +
+                                '<button class="layui-btn ' + likeBtnClass + ' layui-btn-sm like-btn" data-post-id="' + post.id + '">' +
+                                '<i class="layui-icon layui-icon-praise"></i> 点赞 <span class="like-count">' + likeCount + '</span>' +
+                                '</button>' +
+                                '<button class="layui-btn layui-btn-primary layui-btn-sm comment-btn" data-post-id="' + post.id + '">' +
+                                '<i class="layui-icon layui-icon-reply-fill"></i> 评论 <span class="comment-count">' + commentCount + '</span>' +
+                                '</button>' +
+                                '<button class="layui-btn layui-btn-primary layui-btn-sm">' +
+                                '<i class="layui-icon layui-icon-share"></i> 分享' +
+                                '</button>' +
+                                '</div>' +
+                                '<div class="comment-section" style="display: none; margin-top: 15px; border-top: 1px solid #f2f2f2; padding-top: 15px;">' +
+                                '<div class="comment-input" style="margin-bottom: 15px;">' +
+                                '<textarea class="layui-textarea comment-textarea" placeholder="写下你的评论..." style="height: 60px;"></textarea>' +
+                                '<button class="layui-btn layui-btn-sm submit-comment" style="margin-top: 5px;">发表评论</button>' +
+                                '</div>' +
+                                '<div class="comment-list">' +
+                                '<!-- 评论列表将在这里动态加载 -->' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
                         });
                         $('#postList').html(html);
+                        
+                        // 绑定事件
+                        bindPostEvents();
                     } else {
+                        console.log('没有找到动态数据或数据为空'); // 调试信息
                         $('#postList').html('<div class="layui-card-body">暂无动态</div>');
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('加载动态失败:', error);
+                    console.error('状态:', status);
+                    console.error('响应文本:', xhr.responseText);
                     layer.msg('加载动态失败，请刷新页面重试', {icon: 2});
+                }
+            });
+        }
+
+        // 绑定帖子相关事件
+        function bindPostEvents() {
+            // 检查用户点赞状态
+            checkUserLikeStatus();
+            
+            // 点赞事件
+            $('.like-btn').off('click').on('click', function() {
+                var postId = $(this).data('post-id');
+                var $btn = $(this);
+                var $likeCount = $btn.find('.like-count');
+                
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/comment',
+                    type: 'POST',
+                    data: {
+                        action: 'like',
+                        postId: postId
+                    },
+                    success: function(res) {
+                        if(res.success) {
+                            // 从服务器获取最新的点赞数
+                            $likeCount.text(res.likeCount);
+                            if(res.liked) {
+                                $btn.addClass('layui-btn-danger').removeClass('layui-btn-primary');
+                                layer.msg('点赞成功', {icon: 1});
+                            } else {
+                                $btn.addClass('layui-btn-primary').removeClass('layui-btn-danger');
+                                layer.msg('取消点赞', {icon: 1});
+                            }
+                        } else {
+                            layer.msg(res.error || '操作失败', {icon: 2});
+                        }
+                    },
+                    error: function() {
+                        layer.msg('网络错误，请重试', {icon: 2});
+                    }
+                });
+            });
+
+            // 评论按钮事件
+            $('.comment-btn').off('click').on('click', function() {
+                var postId = $(this).data('post-id');
+                var $postItem = $('.post-item[data-post-id="' + postId + '"]');
+                var $commentSection = $postItem.find('.comment-section');
+                
+                if($commentSection.is(':visible')) {
+                    $commentSection.hide();
+                } else {
+                    $commentSection.show();
+                    loadComments(postId, $postItem);
+                }
+            });
+
+            // 提交评论事件
+            $('.submit-comment').off('click').on('click', function() {
+                var $btn = $(this);
+                var $postItem = $btn.closest('.post-item');
+                var postId = $postItem.data('post-id');
+                var $textarea = $postItem.find('.comment-textarea');
+                var message = $textarea.val().trim();
+                
+                if(!message) {
+                    layer.msg('请输入评论内容', {icon: 2});
+                    return;
+                }
+                
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/comment',
+                    type: 'POST',
+                    data: {
+                        action: 'add',
+                        postId: postId,
+                        message: message
+                    },
+                    success: function(res) {
+                        if(res.success) {
+                            $textarea.val('');
+                            layer.msg('评论发布成功', {icon: 1});
+                            // 重新加载评论列表和更新评论数
+                            loadComments(postId, $postItem);
+                            // 更新按钮上的评论数
+                            updateCommentCount(postId, $postItem);
+                        } else {
+                            layer.msg(res.error || '评论发布失败', {icon: 2});
+                        }
+                    },
+                    error: function() {
+                        layer.msg('网络错误，请重试', {icon: 2});
+                    }
+                });
+            });
+        }
+
+        // 检查用户点赞状态
+        function checkUserLikeStatus() {
+            $('.post-item').each(function() {
+                var postId = $(this).data('post-id');
+                var $likeBtn = $(this).find('.like-btn');
+                
+                // 这里可以添加一个API调用来检查用户是否已点赞
+                // 暂时使用默认状态，实际项目中可以添加相应的API
+            });
+        }
+
+        // 加载评论列表
+        function loadComments(postId, $postItem) {
+            var $commentList = $postItem.find('.comment-list');
+            console.log('开始加载评论，帖子ID: ' + postId); // 调试信息
+            
+            $.ajax({
+                url: '${pageContext.request.contextPath}/comment',
+                type: 'GET',
+                data: {
+                    postId: postId
+                },
+                success: function(res) {
+                    console.log('收到评论响应:', res); // 调试信息
+                    if(res.success && res.data && res.data.length > 0) {
+                        console.log('找到 ' + res.data.length + ' 条评论'); // 调试信息
+                        var html = '';
+                        res.data.forEach(function(comment, index) {
+                            console.log('处理第 ' + (index + 1) + ' 条评论:', comment); // 调试信息
+                            var userImage = comment.userImage || 'static/images/default/default-wll.jpg';
+                            html += '<div class="comment-item" style="margin-bottom: 10px; padding: 10px; background: #f8f8f8; border-radius: 4px;">' +
+                                '<div style="display: flex; align-items: center; margin-bottom: 5px;">' +
+                                '<img src="${pageContext.request.contextPath}/' + userImage + '" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">' +
+                                '<span style="font-weight: bold;">' + comment.userName + '</span>' +
+                                '<span style="margin-left: 10px; color: #999; font-size: 12px;">' + comment.cdate + '</span>' +
+                                '</div>' +
+                                '<div style="margin-left: 38px;">' + comment.cmessage + '</div>' +
+                                '</div>';
+                        });
+                        $commentList.html(html);
+                        
+                        // 更新评论数显示
+                        var $commentCount = $postItem.find('.comment-count');
+                        $commentCount.text(res.data.length);
+                        console.log('评论列表更新完成，评论数: ' + res.data.length); // 调试信息
+                    } else {
+                        console.log('没有找到评论数据'); // 调试信息
+                        $commentList.html('<div style="text-align: center; color: #999; padding: 20px;">暂无评论</div>');
+                        // 更新评论数为0
+                        var $commentCount = $postItem.find('.comment-count');
+                        $commentCount.text('0');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('加载评论失败:', error); // 调试信息
+                    console.error('状态:', status);
+                    console.error('响应:', xhr.responseText);
+                    $commentList.html('<div style="text-align: center; color: #999; padding: 20px;">加载评论失败</div>');
+                }
+            });
+        }
+
+        // 更新评论数量
+        function updateCommentCount(postId, $postItem) {
+            $.ajax({
+                url: '${pageContext.request.contextPath}/comment',
+                type: 'GET',
+                data: {
+                    postId: postId
+                },
+                success: function(res) {
+                    if(res.success) {
+                        var commentCount = res.data ? res.data.length : 0;
+                        var $commentCount = $postItem.find('.comment-count');
+                        $commentCount.text(commentCount);
+                        console.log('更新评论数: ' + commentCount); // 调试信息
+                    }
+                },
+                error: function() {
+                    console.log('更新评论数失败');
                 }
             });
         }
@@ -364,13 +593,11 @@
                         var html = '';
                         res.data.forEach(function(friend) {
                             var friendImage = friend.image || 'static/images/default/default-wll.jpg';
-                            html += `
-                            <div class="friend-item">
-                                <img src="${pageContext.request.contextPath}/${friendImage}" class="friend-avatar">
-                                <span style="margin-left: 10px;">${friend.name || '未知用户'}</span>
-                                <span class="layui-badge-dot ${friend.online ? 'layui-bg-green' : 'layui-bg-gray'}" style="margin-left: 5px;"></span>
-                            </div>
-                            `;
+                            html += '<div class="friend-item">' +
+                                '<img src="${pageContext.request.contextPath}/' + friendImage + '" class="friend-avatar">' +
+                                '<span style="margin-left: 10px;">' + (friend.name || '未知用户') + '</span>' +
+                                '<span class="layui-badge-dot ' + (friend.online ? 'layui-bg-green' : 'layui-bg-gray') + '" style="margin-left: 5px;"></span>' +
+                                '</div>';
                         });
                         $('#friendList').html(html);
                     } else {

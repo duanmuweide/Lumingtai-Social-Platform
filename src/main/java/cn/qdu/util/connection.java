@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class connection {
         String url = "jdbc:mysql://127.0.0.1:3306/social_platform?characterEncoding=UTF-8&useSSL=false&&serverTimezone=Asia/Shanghai";
         String username = "root";
-        String password = "Czm982376";
+        String password = "root";
         Connection connection;
 
         public Connection getConnection() throws SQLException {
