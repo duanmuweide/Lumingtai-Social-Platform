@@ -1,4 +1,4 @@
-package cn.qdu.servlet;
+package cn.qdu.service;
 
 import cn.qdu.dao.RelationshipDao;
 import cn.qdu.entity.Relationship;

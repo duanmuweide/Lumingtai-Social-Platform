@@ -135,7 +135,6 @@ public class CommentServlet extends HttpServlet {
             comment.setCid(pid);
             comment.setCuid(uid);
             comment.setCmessage(message.trim());
-            comment.setClike(false); // 评论时默认不点赞
             comment.setCfile(null); // 确保cfile字段不为null
             
             // 设置时间
@@ -168,79 +167,10 @@ public class CommentServlet extends HttpServlet {
     private void toggleLike(HttpServletRequest request, HttpServletResponse response, Users currentUser) 
             throws Exception {
         PrintWriter out = response.getWriter();
-        
-        String postId = request.getParameter("postId");
-        
-        System.out.println("=== 点赞操作调试信息 ===");
-        System.out.println("postId: " + postId);
-        System.out.println("currentUser: " + (currentUser != null ? currentUser.getUid() : "null"));
-        
-        if (postId == null) {
-            out.print("{\"success\": false, \"error\": \"缺少帖子ID参数\"}");
-            return;
-        }
-
-        int pid = Integer.parseInt(postId);
-        
-        // 检查帖子是否存在
-        if (!isPostExists(pid)) {
-            System.out.println("帖子不存在: " + pid);
-            out.print("{\"success\": false, \"error\": \"帖子不存在\"}");
-            return;
-        }
-
-        int uid = currentUser.getUid();
-
-        try {
-            System.out.println("检查用户点赞状态...");
-            // 检查是否已经点赞
-            boolean hasLiked = commentDao.hasUserLiked(pid, uid);
-            System.out.println("用户是否已点赞: " + hasLiked);
-            
-            if (hasLiked) {
-                System.out.println("用户已点赞，执行取消点赞...");
-                // 用户已点赞，需要取消点赞
-                // 直接删除该用户的点赞记录
-                commentDao.deleteUserLike(pid, uid);
-                System.out.println("点赞记录已删除");
-            } else {
-                System.out.println("用户未点赞，执行点赞...");
-                // 用户未点赞，需要添加点赞记录
-                Comments likeComment = new Comments();
-                likeComment.setCid(pid);
-                likeComment.setCuid(uid);
-                likeComment.setClike(true);
-                likeComment.setCmessage(""); // 点赞记录使用空字符串而不是null
-                likeComment.setCfile(null);
-                
-                // 设置时间
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                likeComment.setCdate(sdf.format(new Date()));
-
-                // 插入点赞记录
-                commentDao.insert(likeComment);
-                System.out.println("点赞记录已创建");
-            }
-
-            System.out.println("获取最新点赞数...");
-            // 获取最新的点赞数
-            int likeCount = commentDao.getLikeCount(pid);
-            System.out.println("最新点赞数: " + likeCount);
-            
-            out.print("{\"success\": true, \"liked\": " + !hasLiked + ", \"likeCount\": " + likeCount + "}");
-        } catch (SQLException e) {
-            System.out.println("=== 点赞操作SQL错误 ===");
-            System.out.println("错误信息: " + e.getMessage());
-            System.out.println("SQL状态: " + e.getSQLState());
-            System.out.println("错误代码: " + e.getErrorCode());
-            e.printStackTrace();
-            out.print("{\"success\": false, \"error\": \"数据库操作失败: " + e.getMessage() + "\"}");
-        } catch (Exception e) {
-            System.out.println("=== 点赞操作其他错误 ===");
-            System.out.println("错误信息: " + e.getMessage());
-            e.printStackTrace();
-            out.print("{\"success\": false, \"error\": \"操作失败: " + e.getMessage() + "\"}");
-        }
+        out.print("{\"success\": false, \"error\": \"请使用 /like 路由进行点赞操作\"}");
+        // 旧逻辑已废弃，点赞请走 /like 路由
+        // String postId = request.getParameter("postId");
+        // ... 旧代码 ...
     }
 
     /**
@@ -263,8 +193,8 @@ public class CommentServlet extends HttpServlet {
         if (comments != null && !comments.isEmpty()) {
             int commentIndex = 0;
             for (Comments comment : comments) {
-                // 只显示真正的评论，过滤掉点赞记录和空评论
-                if (comment.getClike() || (comment.getCmessage() == null || comment.getCmessage().trim().isEmpty())) {
+                // 只显示真正的评论，过滤掉空评论
+                if (comment.getCmessage() == null || comment.getCmessage().trim().isEmpty()) {
                     continue;
                 }
                 
@@ -301,7 +231,6 @@ public class CommentServlet extends HttpServlet {
                 json.append("{")
                     .append("\"cid\":").append(comment.getCid()).append(",")
                     .append("\"cuid\":").append(comment.getCuid()).append(",")
-                    .append("\"clike\":").append(comment.getClike()).append(",")
                     .append("\"cfile\":\"").append(comment.getCfile() != null ? comment.getCfile() : "").append("\",")
                     .append("\"cmessage\":\"").append(message).append("\",")
                     .append("\"cdate\":\"").append(comment.getCdate()).append("\",")

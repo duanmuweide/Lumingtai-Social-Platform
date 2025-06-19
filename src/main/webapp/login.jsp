@@ -112,7 +112,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">用户名</label>
                 <div class="layui-input-block">
-                    <input type="text" name="username" lay-verify="required" placeholder="请输入用户名" class="layui-input">
+                    <input type="text" name="loginInfo" lay-verify="required" placeholder="请输入用户名" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
