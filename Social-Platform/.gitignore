@@ -3,6 +3,12 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+
+# Resources folder (if you want to ignore the entire folder)
+resources/
+util/
+.idea/
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml

@@ -4,12 +4,11 @@ import java.io.Serializable;
 
 /**
  * @author Honey
- * Create on 2025-06-02 19:19:54
+ * Create on 2025-06-19 16:20:29
  */
 public class Users implements Serializable {
 
-	private static final long serialVersionUID = 1598401129619L;
-
+	private static final long serialVersionUID = 1590848052019L;
 
 	private Integer uid;
 	private String uname;
@@ -139,4 +138,3 @@ public class Users implements Serializable {
 		return str.toString();
 	}
 }
-

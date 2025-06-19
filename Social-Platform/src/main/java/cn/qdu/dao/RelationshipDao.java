@@ -2,6 +2,8 @@ package cn.qdu.dao;
 
 import cn.qdu.entity.Relationship;
 import cn.qdu.util.connection;
+import org.teasoft.bee.osql.Op;
+import org.teasoft.bee.osql.api.Condition;
 import org.teasoft.bee.osql.api.Suid;
 import org.teasoft.honey.osql.shortcut.BF;
 
@@ -13,9 +15,7 @@ import java.util.List;
 public class RelationshipDao {
     public boolean insert(Relationship relationship){
         Suid suid = BF.getSuid();
-        int cnt = suid.insert(relationship);
-        System.out.println("插入成功!");
-        return cnt > 0;
+        return suid.insert(relationship) > 0;
     }
 
     public void delete(Relationship relationship){
@@ -92,13 +92,23 @@ public class RelationshipDao {
         else {System.out.println("没有记录"); return null;}
     }
 
-    public List<Relationship> selectByManytwoid(Integer uid, Integer friendid){
+
+    // 在RelationshipDao类中添加更完整的查询方法
+    public List<Relationship> getFriends(int userId) {
         Suid suid = BF.getSuid();
-        Relationship rel = new Relationship();
-        rel.setRuid(uid);
-        rel.setRfiendid(friendid);
-        List<Relationship> list = suid.select(rel);
-        return list;
+        Condition condition = BF.getCondition();
+
+        // 查询当前用户的好友关系（rtype=1表示好友关系）
+        condition.op("ruid", Op.eq, userId)
+                .op("rtype", Op.eq, 1);
+
+        return suid.select(new Relationship(), condition);
+    }
+
+    // 同时保留原有的select方法
+    public List<Relationship> select(Relationship relationship) {
+        Suid suid = BF.getSuid();
+        return suid.select(relationship);
     }
 
 }

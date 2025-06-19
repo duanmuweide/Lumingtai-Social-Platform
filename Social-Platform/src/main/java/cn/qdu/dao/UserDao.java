@@ -27,14 +27,6 @@ public class UserDao {
         }
 
         public void update(Users user) throws SQLException {
-//            Suid suid = BF.getSuid();
-//            System.out.println("执行更新");
-//            System.out.println(user.getUid());
-//            int updatecount = suid.update(user);
-//            System.out.println(updatecount);
-//            if (updatecount > 0 ) System.out.println("更新成功!");
-//            else System.out.println("更新失败!");
-
             connection con = new connection();
             Connection connect = con.getConnection();
 

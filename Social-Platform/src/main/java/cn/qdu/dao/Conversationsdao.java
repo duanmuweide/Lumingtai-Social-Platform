@@ -3,6 +3,7 @@ package cn.qdu.dao;
 
 import cn.qdu.entity.Conversations;
 import org.teasoft.bee.osql.Op;
+import org.teasoft.bee.osql.OrderType;
 import org.teasoft.bee.osql.api.Condition;
 import org.teasoft.bee.osql.api.Suid;
 import org.teasoft.honey.osql.shortcut.BF;
@@ -11,9 +12,9 @@ import java.util.List;
 
 public class Conversationsdao {
     //消息的插入函数，成功返回1，否则返回0
-    public boolean insert(Conversations conversations) {
+    public int insert(Conversations conversations) {
         Suid suid = BF.getSuid();
-        return suid.insert(conversations) > 0 ;
+        return suid.insert(conversations) > 0 ? 1 : 0;
     }
 
     //消息的删除函数，成功返回1，否则返回0
@@ -26,6 +27,11 @@ public class Conversationsdao {
         }
 
         return suid.delete(conversations) > 0 ? 1 : 0;
+    }
+
+    public void delete(Conversations conversations) {
+        Suid suid = BF.getSuid();
+        suid.delete(conversations);
     }
 
     //消息根据id查询，成功返回消息，否则返回null
@@ -60,14 +66,33 @@ public class Conversationsdao {
         return result.isEmpty() ? null : result;
     }
 
-    // 实现根据fromid和toid查询信息记录
-    public List<Conversations> selectbyfromandto(Integer from, Integer to) {
+    public List<Conversations> getConversations(int user1, int user2) {
         Suid suid = BF.getSuid();
         Condition condition = BF.getCondition();
+
+        // 创建查询条件： (user1发给user2) 或 (user2发给user1)
+        // 方法1：使用Op.or组合条件
+        condition.op("csenderid", Op.eq, user1).op("creceiverid", Op.eq, user2);
+        condition.or();
+        condition.op("csenderid", Op.eq, user2).op("creceiverid", Op.eq, user1);
+
+        // 方法2：如果方法1不行，可以尝试使用原生SQL条件
+        // condition.op("(csenderid=? AND creceiverid=?) OR (csenderid=? AND creceiverid=?)",
+        //     new Object[]{user1, user2, user2, user1});
+
+        // 按日期排序
+        condition.orderBy("cdate", OrderType.ASC);
+
+        return suid.select(new Conversations(), condition);
+    }
+
+    public List<Conversations> selectBytwoid(int id1, int id2) {
+        Suid suid = BF.getSuid();
         Conversations conversations = new Conversations();
-        conversations.setCsenderid(from);
-        conversations.setCreceiverid(to);
-        List<Conversations> result = suid.select(conversations, condition);
+        conversations.setCsenderid(id1);
+        conversations.setCreceiverid(id2);
+        List<Conversations> result = suid.select(conversations);
         return result.isEmpty() ? null : result;
     }
+
 }
