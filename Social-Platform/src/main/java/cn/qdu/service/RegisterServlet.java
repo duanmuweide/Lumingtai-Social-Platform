@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.UUID;
 
+
 @WebServlet("/register")
 @MultipartConfig(
     maxFileSize = 10485760,    // 10MB
@@ -24,6 +25,21 @@ import java.util.UUID;
 )
 public class RegisterServlet extends HttpServlet {
     private UserDao userDao = new UserDao();
+
+import java.util.regex.Pattern;
+
+@WebServlet("/register")
+@MultipartConfig(
+        maxFileSize = 10485760,    // 10MB
+        maxRequestSize = 20971520, // 20MB
+        fileSizeThreshold = 0
+)
+public class RegisterServlet extends HttpServlet {
+    private UserDao userDao = new UserDao();
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^1[3-9]\\d{9}$");
+    private static final String[] ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/gif"};
+
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -44,6 +60,31 @@ public class RegisterServlet extends HttpServlet {
                 return;
             }
 
+
+            // 用户名长度和格式验证
+            if (uname.length() < 3 || uname.length() > 20) {
+                sendResponse(response, false, "用户名长度必须在3-20个字符之间");
+                return;
+            }
+
+            // 密码长度验证
+            if (upwd.length() > 20) {
+                sendResponse(response, false, "密码长度不能超过20个字符");
+                return;
+            }
+
+            // 邮箱格式验证
+            if (uemail != null && !uemail.isEmpty() && !EMAIL_PATTERN.matcher(uemail).matches()) {
+                sendResponse(response, false, "邮箱格式不正确");
+                return;
+            }
+
+            // 手机号格式验证
+            if (uphonenumber != null && !uphonenumber.isEmpty() && !PHONE_PATTERN.matcher(uphonenumber).matches()) {
+                sendResponse(response, false, "手机号格式不正确");
+                return;
+            }
+
             // 检查用户名、手机号、邮箱是否已存在
             List<Users> existingUsers = userDao.selectByName(uname);
             if (existingUsers != null && !existingUsers.isEmpty()) {
@@ -55,6 +96,7 @@ public class RegisterServlet extends HttpServlet {
             String imagePath = null;
             Part filePart = request.getPart("ulmage");
             if (filePart != null && filePart.getSize() > 0) {
+
                 String fileName = UUID.randomUUID().toString() + getFileExtension(filePart);
                 String uploadPath = getServletContext().getRealPath("/uploads");
                 File uploadDir = new File(uploadPath);
@@ -63,15 +105,46 @@ public class RegisterServlet extends HttpServlet {
                 }
                 filePart.write(uploadPath + File.separator + fileName);
                 imagePath = "uploads/" + fileName;
+
+                // 验证文件类型
+                String contentType = filePart.getContentType();
+                boolean isAllowedType = false;
+                for (String type : ALLOWED_IMAGE_TYPES) {
+                    if (type.equals(contentType)) {
+                        isAllowedType = true;
+                        break;
+                    }
+                }
+                if (!isAllowedType) {
+                    sendResponse(response, false, "只允许上传JPG、PNG或GIF格式的图片");
+                    return;
+                }
+
+                String fileName = UUID.randomUUID().toString() + getFileExtension(filePart);
+                String uploadPath = getServletContext().getRealPath("/static/images/avatars");
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
+                filePart.write(uploadPath + File.separator + fileName);
+                imagePath = "static/images/avatars/" + fileName;
+
             }
 
             // 创建新用户
             Users newUser = new Users();
             newUser.setUname(uname);
+
             newUser.setUpwd(upwd); // 注意: 实际项目中应该加密存储
             newUser.setUphonenumber(uphonenumber);
             newUser.setUemail(uemail);
             newUser.setUgender("true".equals(ugender)); // 更安全的布尔值转换
+
+            newUser.setUpwd(upwd);
+            newUser.setUphonenumber(uphonenumber);
+            newUser.setUemail(uemail);
+            newUser.setUgender("true".equals(ugender));
+
             newUser.setUsign("这个人很懒，什么都没留下");
             if (imagePath != null) {
                 newUser.setUimage(imagePath);

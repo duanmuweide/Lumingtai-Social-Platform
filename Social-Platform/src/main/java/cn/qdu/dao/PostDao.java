@@ -28,7 +28,11 @@ public class PostDao {
         connection con = new connection();
         Connection connect = con.getConnection();
 
-        String sql = "UPDATE relationship SET puid = ?,pmessage = ?, pdate= ?, pfile = ? WHERE pid = ?";
+<<<<<<< HEAD:Social-Platform/src/main/java/cn/qdu/dao/PostDao.java
+        String sql = "UPDATE posts SET puid = ?,pmessage = ?, pdate= ?, pfile = ? WHERE pid = ?";
+=======
+        String sql = "UPDATE posts SET puid = ?, pmessage = ?, pdate = ?, pfile = ? WHERE pid = ?";
+>>>>>>> 0e49da2bd1bb6c818f5f17aa8ae3f52b5ec7955c:src/main/java/cn/qdu/dao/PostDao.java
 
         PreparedStatement ps = connect.prepareStatement(sql);
 
@@ -57,6 +61,20 @@ public class PostDao {
             return list;
         } else {
             System.out.println("没有记录");
+            return null;
+        }
+    }
+
+    public List<Posts> selectByPid(Integer pid) {
+        Suid suid = BF.getSuid();
+        Posts posts = new Posts();
+        posts.setPid(pid);
+        List<Posts> list = suid.select(posts);
+        if (list.size() > 0) {
+            System.out.println("根据ID查询成功");
+            return list;
+        } else {
+            System.out.println("没有找到该帖子");
             return null;
         }
     }
@@ -110,6 +128,19 @@ public class PostDao {
         posts.setPmessage(pmessage);
         posts.setPdate(pdate);
         posts.setPfile(pfile);
+        List<Posts> list = suid.select(posts);
+        if (list.size() > 0) {
+            System.out.println("查询成功");
+            return list;
+        } else {
+            System.out.println("没有记录");
+            return null;
+        }
+    }
+
+    public List<Posts> selectAll() {
+        Suid suid = BF.getSuid();
+        Posts posts = new Posts();
         List<Posts> list = suid.select(posts);
         if (list.size() > 0) {
             System.out.println("查询成功");

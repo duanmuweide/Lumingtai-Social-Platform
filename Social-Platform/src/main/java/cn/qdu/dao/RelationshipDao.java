@@ -13,10 +13,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class RelationshipDao {
-    public void insert(Relationship relationship){
+    public boolean insert(Relationship relationship){
         Suid suid = BF.getSuid();
-        suid.insert(relationship);
+        int cnt = suid.insert(relationship);
         System.out.println("插入成功!");
+        return cnt > 0;
     }
 
     public void delete(Relationship relationship){
@@ -110,6 +111,15 @@ public class RelationshipDao {
     public List<Relationship> select(Relationship relationship) {
         Suid suid = BF.getSuid();
         return suid.select(relationship);
+
+    public List<Relationship> selectByManytwoid(Integer uid, Integer friendid){
+        Suid suid = BF.getSuid();
+        Relationship rel = new Relationship();
+        rel.setRuid(uid);
+        rel.setRfiendid(friendid);
+        List<Relationship> list = suid.select(rel);
+        return list;
+
     }
 
 }

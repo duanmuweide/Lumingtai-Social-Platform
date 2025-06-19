@@ -11,10 +11,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class UserDao {
-        public void insert(Users user){
+        public boolean insert(Users user){
             Suid suid = BF.getSuid();
-            suid.insert(user);
+            int cnt = suid.insert(user);
             System.out.println("插入成功!");
+            if(cnt>0){ return true;}
+            else return false;
         }
 
         public void delete(Users user){
