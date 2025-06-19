@@ -102,4 +102,6 @@ public class UserDao {
             if (list.size() > 0) {System.out.println("查询成功"); return list;}
             else {System.out.println("没有记录"); return null;}
         }
+
+
 }

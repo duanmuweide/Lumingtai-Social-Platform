@@ -32,7 +32,11 @@ public class LoginServlet extends HttpServlet {
             }
 
             // 调用 DAO 层验证登录
+
+            List<Users> users = userDao.selectByName(loginInfo);
+
             List<Users> users = userDao.selectOne(loginInfo);
+
 
             if (users != null && !users.isEmpty()) {
                 Users user = users.get(0);
@@ -62,4 +66,6 @@ public class LoginServlet extends HttpServlet {
         out.print("{\"success\": false, \"error\": \"登录请求必须使用POST方法\"}");
         out.close();
     }
+
 }
+

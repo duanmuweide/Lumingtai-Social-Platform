@@ -3,8 +3,10 @@ package cn.qdu.dao;
 
 import cn.qdu.entity.Conversations;
 import org.teasoft.bee.osql.Op;
-import org.teasoft.bee.osql.api.Condition;
+
+import org.teasoft.bee.osql.OrderType;
 import org.teasoft.bee.osql.api.Suid;
+import org.teasoft.bee.osql.api.Condition;
 import org.teasoft.honey.osql.shortcut.BF;
 
 import java.util.List;
@@ -60,6 +62,28 @@ public class Conversationsdao {
         return result.isEmpty() ? null : result;
     }
 
+
+    public List<Conversations> getConversations(int user1, int user2) {
+        Suid suid = BF.getSuid();
+        Condition condition = BF.getCondition();
+
+        // 创建查询条件： (user1发给user2) 或 (user2发给user1)
+        // 方法1：使用Op.or组合条件
+        condition.op("csenderid", Op.eq, user1).op("creceiverid", Op.eq, user2);
+        condition.or();
+        condition.op("csenderid", Op.eq, user2).op("creceiverid", Op.eq, user1);
+
+        // 方法2：如果方法1不行，可以尝试使用原生SQL条件
+        // condition.op("(csenderid=? AND creceiverid=?) OR (csenderid=? AND creceiverid=?)",
+        //     new Object[]{user1, user2, user2, user1});
+
+        // 按日期排序
+        condition.orderBy("cdate", OrderType.ASC);
+
+        return suid.select(new Conversations(), condition);
+    }
+
+
     // 实现根据fromid和toid查询信息记录
     public List<Conversations> selectbyfromandto(Integer from, Integer to) {
         Suid suid = BF.getSuid();
@@ -70,4 +94,5 @@ public class Conversationsdao {
         List<Conversations> result = suid.select(conversations, condition);
         return result.isEmpty() ? null : result;
     }
+
 }

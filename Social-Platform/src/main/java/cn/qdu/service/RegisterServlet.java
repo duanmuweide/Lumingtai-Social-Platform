@@ -15,6 +15,17 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.UUID;
+
+
+@WebServlet("/register")
+@MultipartConfig(
+    maxFileSize = 10485760,    // 10MB
+    maxRequestSize = 20971520, // 20MB
+    fileSizeThreshold = 0
+)
+public class RegisterServlet extends HttpServlet {
+    private UserDao userDao = new UserDao();
+
 import java.util.regex.Pattern;
 
 @WebServlet("/register")
@@ -28,6 +39,7 @@ public class RegisterServlet extends HttpServlet {
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
     private static final Pattern PHONE_PATTERN = Pattern.compile("^1[3-9]\\d{9}$");
     private static final String[] ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/gif"};
+
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -47,6 +59,7 @@ public class RegisterServlet extends HttpServlet {
                 sendResponse(response, false, "用户名和密码不能为空");
                 return;
             }
+
 
             // 用户名长度和格式验证
             if (uname.length() < 3 || uname.length() > 20) {
@@ -83,6 +96,16 @@ public class RegisterServlet extends HttpServlet {
             String imagePath = null;
             Part filePart = request.getPart("ulmage");
             if (filePart != null && filePart.getSize() > 0) {
+
+                String fileName = UUID.randomUUID().toString() + getFileExtension(filePart);
+                String uploadPath = getServletContext().getRealPath("/uploads");
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdir();
+                }
+                filePart.write(uploadPath + File.separator + fileName);
+                imagePath = "uploads/" + fileName;
+
                 // 验证文件类型
                 String contentType = filePart.getContentType();
                 boolean isAllowedType = false;
@@ -105,15 +128,23 @@ public class RegisterServlet extends HttpServlet {
                 }
                 filePart.write(uploadPath + File.separator + fileName);
                 imagePath = "static/images/avatars/" + fileName;
+
             }
 
             // 创建新用户
             Users newUser = new Users();
             newUser.setUname(uname);
+
+            newUser.setUpwd(upwd); // 注意: 实际项目中应该加密存储
+            newUser.setUphonenumber(uphonenumber);
+            newUser.setUemail(uemail);
+            newUser.setUgender("true".equals(ugender)); // 更安全的布尔值转换
+
             newUser.setUpwd(upwd);
             newUser.setUphonenumber(uphonenumber);
             newUser.setUemail(uemail);
             newUser.setUgender("true".equals(ugender));
+
             newUser.setUsign("这个人很懒，什么都没留下");
             if (imagePath != null) {
                 newUser.setUimage(imagePath);

@@ -149,18 +149,8 @@
                 <div class="layui-col-md6">
                     <ul class="layui-nav" lay-filter="">
                         <li class="layui-nav-item layui-this"><a href="">首页</a></li>
-<<<<<<< HEAD:Social-Platform/src/main/webapp/home.jsp
-                        <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/friends.jsp">好友</a></li>
-                        <li class="layui-nav-item">
-                            <a href="javascript:;">消息<span class="layui-badge notification-badge">5</span></a>
-                            <dl class="layui-nav-child">
-                                <dd><a href="javascript:;">评论 <span class="layui-badge">3</span></a></dd>
-                                <dd><a href="javascript:;">私信 <span class="layui-badge">2</span></a></dd>
-                            </dl>
-                        </li>
-=======
-                        <li class="layui-nav-item"><a href="">好友</a></li>
->>>>>>> 0e49da2bd1bb6c818f5f17aa8ae3f52b5ec7955c:src/main/webapp/home.jsp
+
+                        <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/chat">好友</a></li>
                         <li class="layui-nav-item"><a href="">群组</a></li>
                         <li class="layui-nav-item"><a href="messages.jsp">消息</a></li>
                     </ul>
@@ -262,6 +252,31 @@
 
 <script src="${pageContext.request.contextPath}/layui/layui.js"></script>
 <script>
+
+layui.use(['element', 'layer', 'form'], function(){
+    var element = layui.element;
+    var layer = layui.layer;
+    var form = layui.form;
+
+    // 显示欢迎消息
+    layer.msg('欢迎回来！', {icon: 1});
+
+    // 初始化导航栏
+    element.render('nav');
+
+    // 发布动态
+    document.querySelector('.post-box .layui-btn').onclick = function(){
+        var content = document.querySelector('.post-box textarea').value;
+        if(!content.trim()) {
+            layer.msg('请输入内容', {icon: 2});
+            return;
+        }
+        // TODO: 发送到服务器
+        layer.msg('发布成功', {icon: 1});
+        document.querySelector('.post-box textarea').value = '';
+    };
+});
+
     layui.use(['element', 'layer', 'form', 'upload'], function(){
         var element = layui.element;
         var layer = layui.layer;
@@ -335,7 +350,7 @@
 
         // 加载动态列表
         function loadPosts() {
-<<<<<<< HEAD:Social-Platform/src/main/webapp/home.jsp
+
             $.get('${pageContext.request.contextPath}/posts', function(res){
                 if(res.success){
                     var html = '';
@@ -365,7 +380,7 @@
                 `;
                     });
                     $('#postList').html(html);
-=======
+
             $.ajax({
                 url: '${pageContext.request.contextPath}/posts',
                 type: 'GET',
@@ -621,7 +636,7 @@
                 },
                 error: function() {
                     console.log('更新评论数失败');
->>>>>>> 0e49da2bd1bb6c818f5f17aa8ae3f52b5ec7955c:src/main/webapp/home.jsp
+
                 }
             });
         }
@@ -666,6 +681,7 @@
             loadFriends();
         }, 60000); // 每60秒刷新一次
     });
+
 </script>
 </body>
 </html>
