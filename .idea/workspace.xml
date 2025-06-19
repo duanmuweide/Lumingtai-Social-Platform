@@ -9,7 +9,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e07088dd-ae47-42ca-8b7e-7d4b4ca70ea8" name="Changes" comment="Changes" />
+    <list default="true" id="e07088dd-ae47-42ca-8b7e-7d4b4ca70ea8" name="Changes" comment="Changes">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/CommentServlet_BACKUP_3191.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/CommentServlet_BASE_3191.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/CommentServlet_LOCAL_3191.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/CommentServlet_REMOTE_3191.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -95,7 +102,6 @@
     "Tomcat 服务器.login.jsp.executor": "Run",
     "Tomcat 服务器.tomcat.executor": "Run",
     "Tomcat 服务器.未命名.executor": "Run",
-    "git-widget-placeholder": "czm-code 上的 #13",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/hp/Desktop/Hadoop-Pattern-CLS01",
     "node.js.detected.package.eslint": "true",

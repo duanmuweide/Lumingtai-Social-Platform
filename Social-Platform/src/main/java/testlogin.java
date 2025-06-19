@@ -1,4 +1,4 @@
-import cn.qdu.dao.RelationshipDao;
+mport cn.qdu.dao.RelationshipDao;
 import cn.qdu.entity.Relationship;
 
 public class testlogin {
