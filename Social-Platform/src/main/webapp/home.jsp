@@ -64,7 +64,7 @@
                     <ul class="layui-nav" lay-filter="">
                         <li class="layui-nav-item layui-this"><a href="">首页</a></li>
                         <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/chat">好友</a></li>
-                        <li class="layui-nav-item"><a href="">消息</a></li>
+                        <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/messages">消息</a></li>
                         <li class="layui-nav-item"><a href="">群组</a></li>
                     </ul>
                 </div>

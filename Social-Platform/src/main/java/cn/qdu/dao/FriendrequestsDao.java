@@ -132,16 +132,14 @@ public class FriendrequestsDao {
     }
 
     public boolean acceptFriendRequest(int reqid, int recid) throws SQLException {
-        String sql = "UPDATE friend_requests SET status=true WHERE reqid=? AND recid = ? AND status=false";
-        connection con = new connection();
-        Connection connect = con.getConnection();
-        try (PreparedStatement ps = connect.prepareStatement(sql)) {
-            ps.setInt(1, reqid);
-            ps.setInt(2, recid);
-            return ps.executeUpdate() > 0;
-        }
+        Suid suid = BF.getSuid();
+        FriendRequests friendRequests = new FriendRequests();
+        friendRequests.setReqid(reqid);
+        friendRequests.setRecid(recid);
+        friendRequests.setStatus(false);
+        int cnt = suid.delete(friendRequests);
+        if (cnt > 0) {return true;}
+        else {return false;}
     }
-
-
 
 }

@@ -58,6 +58,7 @@ public class MessagesServlet extends HttpServlet {
                     UserDao userDao = new UserDao();
                     List<Users> users = userDao.selectById(req.getReqid());
                     Users user = users.get(0);
+                    System.out.println(user);
 
                     out.println("<div class=\"request-item\" data-request-id=\"" + req.getReqid() + "\">");
                     out.println("  <img src=\"" + (user.getUimage() != null ? user.getUimage() : "default-avatar.jpg") + "\" ");
@@ -91,7 +92,7 @@ public class MessagesServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
         request.setAttribute("friendRequests", friendRequests);
-        request.getRequestDispatcher("/messages.jsp").forward(request, response);
+        request.getRequestDispatcher("/message.jsp").forward(request, response);
     }
 
     @Override
@@ -151,9 +152,7 @@ public class MessagesServlet extends HttpServlet {
 
             if ("accept".equals(type)) {
                 // 接受好友请求
-                success = friendDAO.acceptFriendRequest(requestId, currentUser.getUid());
 
-                if (success) {
                     // 建立好友关系
                     Relationship s1 = new Relationship();
                     Relationship s2 = new Relationship();
@@ -176,7 +175,9 @@ public class MessagesServlet extends HttpServlet {
                     RelationshipDao rdao = new RelationshipDao();
                     success = rdao.insert(s1) && rdao.insert(s2);
 
-                }
+                success = friendDAO.acceptFriendRequest(requestId, currentUser.getUid());
+
+
             } else if ("reject".equals(type)) {
                 // 拒绝好友请求
                 success = friendDAO.rejectFriendRequest(requestId, currentUser.getUid());

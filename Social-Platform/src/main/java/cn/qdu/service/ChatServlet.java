@@ -5,7 +5,6 @@ import cn.qdu.dao.FriendrequestsDao;
 import cn.qdu.dao.RelationshipDao;
 import cn.qdu.dao.UserDao;
 import cn.qdu.entity.Conversations;
-import cn.qdu.entity.FriendRequests;
 import cn.qdu.entity.Relationship;
 import cn.qdu.entity.Users;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -133,7 +132,7 @@ public class ChatServlet extends HttpServlet {
 
             }else if("deleteFriend".equals(action)){
                 int friendId = Integer.parseInt(request.getParameter("friendId"));
-                // 删除两个关系以及他们的所有消息以及他们的请求验证
+                // 删除两个关系以及他们的所有消息
                 RelationshipDao relationshipDao = new RelationshipDao();
                 Relationship relationship = new Relationship();
 
@@ -146,35 +145,22 @@ public class ChatServlet extends HttpServlet {
 
                 // 删除消息
                 Conversationsdao conversationsDao = new Conversationsdao();
-                Conversations conversation = new Conversations();
 
                 List<Conversations> con = conversationsDao.selectBytwoid(currentUser.getUid(), friendId);
-                if(con.size()>0){
+                if(con != null && con.size() > 0){
                     for(Conversations c : con){
                         conversationsDao.delete(c);
                     }
                 }
 
                 List<Conversations> con2 = conversationsDao.selectBytwoid(friendId, currentUser.getUid());
-                if(con2.size()>0){
+                if(con2 != null && con2.size() > 0){
                     for(Conversations c : con2){
                         conversationsDao.delete(c);
                     }
                 }
 
-                // 删除请求表
-                FriendrequestsDao friendrequestsDao = new FriendrequestsDao();
-                FriendRequests f = FriendrequestsDao.selectBytwoidandstatus(currentUser.getUid(), friendId);
-                if(f != null){
-                    friendrequestsDao.delete(f);
-                }else {
-                    f = FriendrequestsDao.selectBytwoidandstatus(friendId, currentUser.getUid());
-                    friendrequestsDao.delete(f);
-                }
-
-
                 jsonMap.put("success", true);
-
             }
 
             // 将Map转换为JSON字符串
@@ -226,7 +212,14 @@ public class ChatServlet extends HttpServlet {
                 return;
             }
 
-            // 5. 创建好友请求记录
+            // 5. 如果对方已经给你发送了请求，那么你不可以再给他发送
+            if (hasPendingRequest(friendId, currentUser.getUid())) {
+                jsonMap.put("success", false);
+                jsonMap.put("message", "对方已经向你发送了请求");
+                return;
+            }
+
+            // 6. 创建好友请求记录
             boolean success = createFriendRequest(currentUser.getUid(), friendId, message);
 
             if (success) {

@@ -310,8 +310,8 @@
       <div class="layui-col-md6">
         <ul class="layui-nav" lay-filter="">
           <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/home.jsp">首页</a></li>
-          <li class="layui-nav-item layui-this"><a href="${pageContext.request.contextPath}/chat">好友</a></li>
-          <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/message.jsp">消息</a></li>
+          <li class="layui-nav-item layui-this"><a href="">好友</a></li>
+          <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/messages">消息</a></li>
           <li class="layui-nav-item"><a href="">群组</a></li>
         </ul>
       </div>
@@ -499,6 +499,9 @@
       // 初始化滚动到底部
       scrollToBottom();
 
+      refreshMessages();
+
+
       // 点击好友切换聊天
       $(document).on('click', '.friend-item', function() {
         var friendId = $(this).data('friend-id');
@@ -639,7 +642,11 @@
           type: 1,
           title: '添加好友',
           area: ['400px', '300px'],
-          content: $('#addFriendForm') // 确保这个ID指向的是隐藏的表单div
+          content: $('#addFriendForm') ,// 确保这个ID指向的是隐藏的表单div
+          end: function() {
+            // 当弹窗关闭时，将 #addFriendForm 移回 body 并隐藏
+            $('#addFriendForm').css('display', 'none').appendTo('body');
+          }
         });
       });
 

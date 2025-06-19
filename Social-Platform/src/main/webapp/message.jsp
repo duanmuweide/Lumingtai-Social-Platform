@@ -133,8 +133,8 @@
             <div class="layui-col-md6">
                 <ul class="layui-nav" lay-filter="">
                     <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/home.jsp">首页</a></li>
-                    <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/chat.jsp">好友</a></li>
-                    <li class="layui-nav-item layui-this"><a href="${pageContext.request.contextPath}/message.jsp">消息</a></li>
+                    <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/chat">好友</a></li>
+                    <li class="layui-nav-item layui-this"><a href="">消息</a></li>
                     <li class="layui-nav-item"><a href="">群组</a></li>
                 </ul>
             </div>
@@ -181,8 +181,8 @@
                 <div class="request-message">验证消息: <%= requests.getMessage() != null ? requests.getMessage() : "无" %></div>
             </div>
             <div class="request-actions">
-                <button class="layui-btn layui-btn-sm layui-btn-normal accept-btn">接受</button>
-                <button class="layui-btn layui-btn-sm layui-btn-danger reject-btn">拒绝</button>
+                <button class="layui-btn layui-btn-sm layui-btn-normal accept-btn" data-id="<%= user.getUid() %>">接受</button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger reject-btn" data-id="<%= user.getUid() %>">拒绝</button>
             </div>
         </div>
         <% } %>
