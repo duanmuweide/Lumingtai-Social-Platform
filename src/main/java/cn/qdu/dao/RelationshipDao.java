@@ -111,7 +111,7 @@ public class RelationshipDao {
     public List<Relationship> select(Relationship relationship) {
         Suid suid = BF.getSuid();
         return suid.select(relationship);
-
+    }
     public List<Relationship> selectByManytwoid(Integer uid, Integer friendid){
         Suid suid = BF.getSuid();
         Relationship rel = new Relationship();

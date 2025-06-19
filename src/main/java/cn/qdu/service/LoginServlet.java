@@ -35,8 +35,6 @@ public class LoginServlet extends HttpServlet {
 
             List<Users> users = userDao.selectByName(loginInfo);
 
-            List<Users> users = userDao.selectOne(loginInfo);
-
 
             if (users != null && !users.isEmpty()) {
                 Users user = users.get(0);

@@ -28,11 +28,9 @@ public class PostDao {
         connection con = new connection();
         Connection connect = con.getConnection();
 
-<<<<<<< HEAD:Social-Platform/src/main/java/cn/qdu/dao/PostDao.java
+
         String sql = "UPDATE posts SET puid = ?,pmessage = ?, pdate= ?, pfile = ? WHERE pid = ?";
-=======
-        String sql = "UPDATE posts SET puid = ?, pmessage = ?, pdate = ?, pfile = ? WHERE pid = ?";
->>>>>>> 0e49da2bd1bb6c818f5f17aa8ae3f52b5ec7955c:src/main/java/cn/qdu/dao/PostDao.java
+
 
         PreparedStatement ps = connect.prepareStatement(sql);
 
