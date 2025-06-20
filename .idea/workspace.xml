@@ -9,22 +9,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e07088dd-ae47-42ca-8b7e-7d4b4ca70ea8" name="Changes" comment="Changes">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/dao/CommentDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/dao/CommentDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/entity/Comments.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/entity/Comments.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/service/ChatServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/service/ChatServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/service/CommentServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/service/CommentServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/service/FriendsServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/service/FriendsServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/service/GetPostsServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/service/GetPostsServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/service/PostServlet.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/service/PostsServlet.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/service/RegisterServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/service/RegisterServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/db/social_platform.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/social_platform.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/home.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/home.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/login.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/login.jsp" afterDir="false" />
-    </list>
+    <list default="true" id="e07088dd-ae47-42ca-8b7e-7d4b4ca70ea8" name="Changes" comment="Changes" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
