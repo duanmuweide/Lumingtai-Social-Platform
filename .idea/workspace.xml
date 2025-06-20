@@ -1,80 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="Social-Platform:war exploded" />
+    </artifacts-to-build>
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e07088dd-ae47-42ca-8b7e-7d4b4ca70ea8" name="Changes" comment="Changes">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/webContexts.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/.idea/webContexts.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/dao/CommentDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/dao/Conversationsdao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/dao/Groupsconversationsdao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/dao/Groupspeopledao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/dao/PostDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/dao/RelationshipDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/dao/UserDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/dao/Usergroupsdao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/entity/Comments.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/entity/Conversations.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/entity/Groupsconversations.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/entity/Groupspeople.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/entity/Posts.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/entity/Relationship.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/entity/Usergroups.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/entity/Users.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/filter/AuthFilter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/ChatServlet.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/CommentServlet.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/FriendsServlet.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/GetPostsServlet.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/LoginServlet.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/LogoutServlet.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/PostServlet.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/PostsServlet.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/PublishPostServlet.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/RegisterServlet.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/SendMessageServlet.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/service/UpdateProfileServlet.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/util/JSONUtil.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/util/PasswordUtil.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/util/ServORM.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/cn/qdu/util/connection.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/java/testlogin.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/resources/bee.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/resources/db/social_platform.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/WEB-INF/web.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/chat.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/editProfile.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/friends.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/home.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/layui/css/layui.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/layui/font/iconfont.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/layui/font/iconfont.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/layui/font/iconfont.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/layui/font/iconfont.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/layui/font/iconfont.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/layui/layui.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/login.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/message_requests.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/register.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/static/images/default/default-wll.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/static/images/register&amp;login/bg1.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/static/images/register&amp;login/bg2.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Social-Platform/src/main/webapp/static/images/register&amp;login/bg3.jpg" beforeDir="false" />
-    </list>
+    <list default="true" id="e07088dd-ae47-42ca-8b7e-7d4b4ca70ea8" name="Changes" comment="Changes" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -91,18 +26,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "duanmuweide"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;duanmuweide&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/duanmuweide/Lumingtai-Social-Platform.git",
-    "accountId": "f8c949d5-8c56-47e1-b0d4-fc5e8497db3f"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/duanmuweide/Lumingtai-Social-Platform.git&quot;,
+    &quot;accountId&quot;: &quot;f8c949d5-8c56-47e1-b0d4-fc5e8497db3f&quot;
   }
-}]]></component>
+}</component>
   <component name="LogFilters">
     <option name="FILTER_ERRORS" value="false" />
     <option name="FILTER_WARNINGS" value="false" />
@@ -110,10 +45,10 @@
     <option name="FILTER_DEBUG" value="true" />
     <option name="CUSTOM_FILTER" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 4
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="2yi77MeiOuT0GEaVsrxyuRG9hGx" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -125,7 +60,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Tomcat 服务器.Tomcat 9.0.86.executor": "Run",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "wade",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",

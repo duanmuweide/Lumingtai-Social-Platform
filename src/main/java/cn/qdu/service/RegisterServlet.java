@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.UUID;
-
+import java.util.regex.Pattern;
 
 @WebServlet("/register")
 @MultipartConfig(
@@ -23,17 +23,7 @@ import java.util.UUID;
     maxRequestSize = 20971520, // 20MB
     fileSizeThreshold = 0
 )
-public class RegisterServlet extends HttpServlet {
-    private UserDao userDao = new UserDao();
 
-import java.util.regex.Pattern;
-
-@WebServlet("/register")
-@MultipartConfig(
-        maxFileSize = 10485760,    // 10MB
-        maxRequestSize = 20971520, // 20MB
-        fileSizeThreshold = 0
-)
 public class RegisterServlet extends HttpServlet {
     private UserDao userDao = new UserDao();
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
@@ -96,16 +86,6 @@ public class RegisterServlet extends HttpServlet {
             String imagePath = null;
             Part filePart = request.getPart("ulmage");
             if (filePart != null && filePart.getSize() > 0) {
-
-                String fileName = UUID.randomUUID().toString() + getFileExtension(filePart);
-                String uploadPath = getServletContext().getRealPath("/uploads");
-                File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) {
-                    uploadDir.mkdir();
-                }
-                filePart.write(uploadPath + File.separator + fileName);
-                imagePath = "uploads/" + fileName;
-
                 // 验证文件类型
                 String contentType = filePart.getContentType();
                 boolean isAllowedType = false;
@@ -119,7 +99,6 @@ public class RegisterServlet extends HttpServlet {
                     sendResponse(response, false, "只允许上传JPG、PNG或GIF格式的图片");
                     return;
                 }
-
                 String fileName = UUID.randomUUID().toString() + getFileExtension(filePart);
                 String uploadPath = getServletContext().getRealPath("/static/images/avatars");
                 File uploadDir = new File(uploadPath);
@@ -128,23 +107,15 @@ public class RegisterServlet extends HttpServlet {
                 }
                 filePart.write(uploadPath + File.separator + fileName);
                 imagePath = "static/images/avatars/" + fileName;
-
             }
 
             // 创建新用户
             Users newUser = new Users();
             newUser.setUname(uname);
-
             newUser.setUpwd(upwd); // 注意: 实际项目中应该加密存储
             newUser.setUphonenumber(uphonenumber);
             newUser.setUemail(uemail);
             newUser.setUgender("true".equals(ugender)); // 更安全的布尔值转换
-
-            newUser.setUpwd(upwd);
-            newUser.setUphonenumber(uphonenumber);
-            newUser.setUemail(uemail);
-            newUser.setUgender("true".equals(ugender));
-
             newUser.setUsign("这个人很懒，什么都没留下");
             if (imagePath != null) {
                 newUser.setUimage(imagePath);

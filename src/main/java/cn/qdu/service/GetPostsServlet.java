@@ -3,6 +3,7 @@ package cn.qdu.service;
 import cn.qdu.dao.PostDao;
 import cn.qdu.dao.UserDao;
 import cn.qdu.dao.CommentDao;
+import cn.qdu.dao.LikeDao;
 import cn.qdu.entity.Posts;
 import cn.qdu.entity.Users;
 
@@ -23,6 +24,7 @@ public class GetPostsServlet extends HttpServlet {
     private PostDao postDao = new PostDao();
     private UserDao userDao = new UserDao();
     private CommentDao commentDao = new CommentDao();
+    private LikeDao likeDao = new LikeDao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -97,13 +99,12 @@ public class GetPostsServlet extends HttpServlet {
                     int commentCount = 0;
                     boolean userLiked = false;
                     try {
-                        likeCount = commentDao.getLikeCount(post.getPid());
+                        likeCount = likeDao.getLikeCount(post.getPid());
                         commentCount = commentDao.getCommentCount(post.getPid());
-                        
                         // 检查当前用户是否已点赞
                         Users currentUser = (Users) request.getSession().getAttribute("user");
                         if (currentUser != null) {
-                            userLiked = commentDao.hasUserLiked(post.getPid(), currentUser.getUid());
+                            userLiked = likeDao.hasUserLiked(post.getPid(), currentUser.getUid());
                         }
                     } catch (SQLException e) {
                         System.out.println("获取统计信息数据库错误: " + e.getMessage());
