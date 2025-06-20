@@ -31,6 +31,6 @@ public class ServORM {
         new GenBean(genConfig).genSomeBeanFile("posts");
         new GenBean(genConfig).genSomeBeanFile("relationship");
         new GenBean(genConfig).genSomeBeanFile("usergroups");
-
+        new GenBean(genConfig).genSomeBeanFile("friend_requests");
     }
 }

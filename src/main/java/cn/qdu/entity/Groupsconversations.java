@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 /**
  * @author Honey
- * Create on 2025-06-02 19:19:54
+ * Create on 2025-06-19 16:20:29
  */
 public class Groupsconversations implements Serializable {
 
-	private static final long serialVersionUID = 1592486301535L;
+	private static final long serialVersionUID = 1590805416916L;
 
 	private Integer gcid;
 	private Integer gcgid;
