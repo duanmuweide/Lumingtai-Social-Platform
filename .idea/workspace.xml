@@ -10,7 +10,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e07088dd-ae47-42ca-8b7e-7d4b4ca70ea8" name="Changes" comment="Changes">
+      <change afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/entity/Grouprequests.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/service/GroupChatServlet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/dao/Conversationsdao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/dao/Conversationsdao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/dao/Groupsconversationsdao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/dao/Groupsconversationsdao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/dao/Groupspeopledao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/dao/Groupspeopledao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/dao/RelationshipDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/dao/RelationshipDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/dao/UserDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/dao/UserDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/service/ChatServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/service/ChatServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/service/GetPostsServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/service/GetPostsServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/qdu/service/MessagesServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/qdu/service/MessagesServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/chat.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/chat.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/home.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/home.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/message.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/message.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +54,10 @@
     &quot;accountId&quot;: &quot;f8c949d5-8c56-47e1-b0d4-fc5e8497db3f&quot;
   }
 }</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/main/webapp/groupChat.jsp" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/webapp/message.jsp" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="LogFilters">
     <option name="FILTER_ERRORS" value="false" />
     <option name="FILTER_WARNINGS" value="false" />
@@ -64,6 +82,7 @@
     "Tomcat 服务器.Tomcat 9.0.86.executor": "Run",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/hp/Desktop/LMT-MR",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -72,6 +91,16 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\2023-2024\Learn\2025Spring\jsp\Lumingtai-Social-Platform\src\main\java\cn\qdu\entity" />
+      <recent name="F:\2023-2024\Learn\2025Spring\jsp\Lumingtai-Social-Platform\src\main\java\cn\qdu\service" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\2023-2024\Learn\2025Spring\jsp\Lumingtai-Social-Platform\src\main\webapp" />
+      <recent name="F:\2023-2024\Learn\2025Spring\jsp\Lumingtai-Social-Platform\src\main\webapp\WEB-INF" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="Tomcat 9.0.86" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9.0.86" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
       <option name="UPDATING_POLICY" value="restart-server" />
@@ -204,6 +233,7 @@
       <workItem from="1750304289354" duration="1006000" />
       <workItem from="1750305378417" duration="654000" />
       <workItem from="1750388132308" duration="1096000" />
+      <workItem from="1750594363800" duration="4470000" />
     </task>
     <servers />
   </component>

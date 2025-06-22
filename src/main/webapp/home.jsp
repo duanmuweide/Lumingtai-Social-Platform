@@ -22,19 +22,40 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/layui/css/layui.css">
     <style>
         .header {
-            border-bottom: 1px solid #f2f2f2;
-            background-color: #fff;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
+            border-bottom: 1px solid #f2f2f2;
+            background-color: #2E2E2E; /* 改为深色背景 */
+            height: 60px;
         }
         .logo {
             color: #1E9FFF;
             font-size: 24px;
             font-weight: bold;
             line-height: 60px;
+        }
+        /* 导航菜单项样式调整 */
+        .layui-nav {
+            background-color: transparent !important; /* 使导航菜单背景透明 */
+        }
+        .layui-nav-item a {
+            color: #fff !important; /* 导航项文字颜色改为白色 */
+        }
+        .layui-nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important; /* 悬停效果 */
+        }
+        .layui-nav .layui-this a {
+             color: #fff !important;
+        }
+        .layui-nav .layui-this {
+            background-color: rgba(30, 159, 255, 0.5) !important; /* 当前选中项效果 */
+        }
+        /* 修复下拉菜单字体颜色问题 */
+        .layui-nav .layui-nav-child dd a {
+            color: #333 !important; /* 设置下拉菜单字体为深色 */
         }
         .main-content {
             padding: 15px;
@@ -149,11 +170,11 @@
                 </div>
                 <div class="layui-col-md6">
                     <ul class="layui-nav" lay-filter="">
-                        <li class="layui-nav-item layui-this"><a href="">首页</a></li>
-
+                        <li class="layui-nav-item layui-this"><a href="${pageContext.request.contextPath}/home.jsp">首页</a></li>
                         <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/chat">好友</a></li>
-                        <li class="layui-nav-item"><a href="">群组</a></li>
-                        <li class="layui-nav-item"><a href="messages.jsp">消息</a></li>
+                        <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/messages">消息</a></li>
+                        <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/groupChat">群组</a></li>
+
                     </ul>
                 </div>
                 <div class="layui-col-md3">
@@ -162,14 +183,10 @@
                             <a href="javascript:;">
                                 <img src="<%= avatarPath %>" class="layui-nav-img">${currentUser.uname}
                             </a>
-                        </li>
-                        <li class="layui-nav-item">
-                            <a href="javascript:;">ID: ${currentUser.uid}</a>
-                        </li>
-                        <li class="layui-nav-item">
-                            <a href="${pageContext.request.contextPath}/logout" class="layui-btn layui-btn-danger layui-btn-sm">
-                                <i class="layui-icon layui-icon-logout"></i> 退出登录
-                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="editProfile.jsp">编辑资料</a></dd>
+                                <dd><a href="${pageContext.request.contextPath}/logout">退出登录</a></dd>
+                            </dl>
                         </li>
                     </ul>
                 </div>
@@ -203,7 +220,7 @@
             </div>
 
             <!-- 中间动态发布区 -->
-            <div class="layui-col-md6">
+            <div class="layui-col-md9">
                 <div class="layui-card">
                     <div class="layui-card-body">
                         <div class="post-box">
@@ -232,18 +249,6 @@
                     </div>
                     <div class="layui-card-body" id="postList">
                         <!-- 动态内容将通过JavaScript动态加载 -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- 右侧好友列表 -->
-            <div class="layui-col-md3">
-                <div class="layui-card">
-                    <div class="layui-card-header">
-                        <i class="layui-icon layui-icon-group"></i> 好友列表
-                    </div>
-                    <div class="layui-card-body" id="friendList">
-                        <!-- 好友列表将通过JavaScript动态加载 -->
                     </div>
                 </div>
             </div>
@@ -503,44 +508,14 @@ layui.use(['element', 'layer', 'form', 'upload'], function(){
         });
     }
 
-    // 加载好友列表
-    function loadFriends() {
-        $.ajax({
-            url: '${pageContext.request.contextPath}/friends',
-            type: 'GET',
-            success: function(res) {
-                if(res.success && res.data) {
-                    var html = '';
-                    res.data.forEach(function(friend) {
-                        var friendImage = friend.image || 'static/images/default/default-wll.jpg';
-                        html += '<div class="friend-item">' +
-                            '<img src="${pageContext.request.contextPath}/' + friendImage + '" class="friend-avatar">' +
-                            '<span style="margin-left: 10px;">' + (friend.name || '未知用户') + '</span>' +
-                            '<span class="layui-badge-dot ' + (friend.online ? 'layui-bg-green' : 'layui-bg-gray') + '" style="margin-left: 5px;"></span>' +
-                            '</div>';
-                    });
-                    $('#friendList').html(html);
-                } else {
-                    $('#friendList').html('<div class="layui-card-body">暂无好友</div>');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('加载好友列表失败:', error);
-                $('#friendList').html('<div class="layui-card-body">加载好友列表失败</div>');
-            }
-        });
-    }
-
     // 延迟加载非关键内容
     setTimeout(function() {
         loadPosts();
-        loadFriends();
     }, 100);
 
     // 定时刷新，但降低频率
     setInterval(function(){
         loadPosts();
-        loadFriends();
     }, 60000); // 每60秒刷新一次
 });
 

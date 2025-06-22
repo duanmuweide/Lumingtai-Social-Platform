@@ -117,4 +117,39 @@ public class Groupspeopledao {
     }
 
 
+
+    public List<Groupspeople> selectbyuid(int uid) {
+        Suid suid = BF.getSuid();
+        Condition condition = BF.getCondition();
+        condition.op("gpuid", Op.eq, uid);
+
+        List<Groupspeople> result = suid.select(new Groupspeople(), condition);
+        // 返回空列表而不是 null
+        return result;
+    }
+
+    // 新增方法：获取群主
+    public Groupspeople getGroupOwner(int groupId) {
+        Suid suid = BF.getSuid();
+        Condition condition = BF.getCondition();
+        condition.op("gpid", Op.eq, groupId);
+        condition.op("gpidentity", Op.eq, 3); // 群主身份为3
+
+        List<Groupspeople> owners = suid.select(new Groupspeople(), condition);
+        return owners != null && !owners.isEmpty() ? owners.get(0) : null;
+    }
+
+    // 新增方法：检查用户是否在群中
+    public boolean isMember(int userId, int groupId) {
+        Suid suid = BF.getSuid();
+        Condition condition = BF.getCondition();
+        condition.op("gpid", Op.eq, groupId);
+        condition.op("gpuid", Op.eq, userId);
+
+        List<Groupspeople> members = suid.select(new Groupspeople(), condition);
+        return members != null && !members.isEmpty();
+    }
+
+
+
 }

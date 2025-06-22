@@ -105,24 +105,28 @@ public class ChatServlet extends HttpServlet {
                 jsonMap.put("success", result > 0);
 
             } else if ("refresh".equals(action)) {
-                // 刷新消息
                 int friendId = Integer.parseInt(request.getParameter("friendId"));
                 List<Conversations> messages = conversationsDao.getConversations(currentUser.getUid(), friendId);
 
-                // 转换为前端需要的格式
                 List<Map<String, Object>> messageList = new ArrayList<>();
                 for (Conversations msg : messages) {
                     Map<String, Object> messageMap = new HashMap<>();
                     messageMap.put("senderId", msg.getCsenderid());
                     messageMap.put("receiverId", msg.getCreceiverid());
                     messageMap.put("message", msg.getCmessage());
-                    messageMap.put("date", msg.getCdate()); // 确保这是字符串格式
+                    messageMap.put("date", msg.getCdate());
+
+                    // 添加头像字段
+                    Users sender = userDao.selectById(msg.getCsenderid()).get(0);
+                    String avatar = sender.getUimage() != null ?
+                            sender.getUimage() : "pictures/default-avatar.jpg";
+                    messageMap.put("senderAvatar", avatar);
+
                     messageList.add(messageMap);
                 }
 
                 jsonMap.put("success", true);
-                jsonMap.put("messages", messageList); // 使用转换后的列表
-
+                jsonMap.put("messages", messageList);
 
             } else if ("friends".equals(action)) {
                 // 获取好友列表
@@ -267,6 +271,7 @@ public class ChatServlet extends HttpServlet {
                 Map<String, Object> friendInfo = new HashMap<>();
                 friendInfo.put("friendId", friend.getUid());
                 friendInfo.put("friendName", friend.getUname());
+                // 这里直接从数据库获取uimage字段
                 friendInfo.put("avatar", friend.getUimage() != null ? friend.getUimage() : "default-avatar.jpg");
                 friendInfo.put("lastMessage", getLastMessage(userId, friend.getUid()));
                 friendList.add(friendInfo);
@@ -281,5 +286,46 @@ public class ChatServlet extends HttpServlet {
             return messages.get(messages.size() - 1).getCmessage();
         }
         return "暂无消息";
+    }
+
+    private String buildMessagesJson(List<Conversations> messages) {
+        StringBuilder json = new StringBuilder("{\"success\": true, \"messages\": [");
+        for (Conversations msg : messages) {
+            json.append("{\"senderId\":").append(msg.getCsenderid())
+                    .append(",\"receiverId\":").append(msg.getCreceiverid())
+                    .append(",\"message\":\"").append(escapeJson(msg.getCmessage()))
+                    .append("\",\"date\":\"").append(msg.getCdate())
+                    .append("\"},");
+        }
+        if (!messages.isEmpty()) {
+            json.deleteCharAt(json.length() - 1);
+        }
+        json.append("]}");
+        return json.toString();
+    }
+
+    private String buildFriendListJson(List<Map<String, Object>> friendList) {
+        StringBuilder json = new StringBuilder("{\"success\": true, \"friends\": [");
+        for (Map<String, Object> friend : friendList) {
+            json.append("{\"friendId\":").append(friend.get("friendId"))
+                    .append(",\"friendName\":\"").append(escapeJson((String)friend.get("friendName")))
+                    .append("\",\"avatar\":\"").append(escapeJson((String)friend.get("avatar")))
+                    .append("\",\"lastMessage\":\"").append(escapeJson((String)friend.get("lastMessage")))
+                    .append("\"},");
+        }
+        if (!friendList.isEmpty()) {
+            json.deleteCharAt(json.length() - 1);
+        }
+        json.append("]}");
+        return json.toString();
+    }
+
+    private String escapeJson(String input) {
+        if (input == null) return "";
+        return input.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 }

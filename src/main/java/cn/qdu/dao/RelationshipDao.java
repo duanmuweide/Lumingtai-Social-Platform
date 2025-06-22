@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 public class RelationshipDao {
     public boolean insert(Relationship relationship){
@@ -91,7 +93,6 @@ public class RelationshipDao {
         if (list.size() > 0) {System.out.println("查询成功"); return list;}
         else {System.out.println("没有记录"); return null;}
     }
-
 
     // 在RelationshipDao类中添加更完整的查询方法
     public List<Relationship> getFriends(int userId) {

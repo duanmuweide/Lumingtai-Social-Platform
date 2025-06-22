@@ -1,8 +1,4 @@
 package cn.qdu.dao;
-
-
-import cn.qdu.entity.Groupspeople;
-import cn.qdu.entity.Usergroups;
 import cn.qdu.entity.Groupsconversations;
 import org.teasoft.bee.osql.Op;
 import org.teasoft.bee.osql.api.Suid;
@@ -73,5 +69,26 @@ public class Groupsconversationsdao {
         List<Groupsconversations> result = suid.select(new Groupsconversations(), condition);
         return result.isEmpty() ? null : result;
     }
+
+    //根据用户id查询
+    public List<Groupsconversations> selectbyuid(int id) {
+        Suid suid = BF.getSuid();
+        Condition condition = BF.getCondition();
+        condition.op("gcuid", Op.eq, id);
+
+        List<Groupsconversations> usergroupsList = suid.select(new Groupsconversations(), condition);
+        return usergroupsList.isEmpty() ? null : usergroupsList;
+    }
+
+    //根据组id查询
+    public List<Groupsconversations> selectbygid(int id) {
+        Suid suid = BF.getSuid();
+        Condition condition = BF.getCondition();
+        condition.op("gcgid", Op.eq, id);
+
+        List<Groupsconversations> usergroupsList = suid.select(new Groupsconversations(), condition);
+        return usergroupsList.isEmpty() ? null : usergroupsList;
+    }
+
 
 }

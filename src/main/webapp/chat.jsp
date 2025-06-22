@@ -305,21 +305,22 @@
   <div class="layui-container">
     <div class="layui-row">
       <div class="layui-col-md3">
-        <div class="logo">社交平台</div>
+        <div class="logo">鹿鸣台</div>
       </div>
       <div class="layui-col-md6">
         <ul class="layui-nav" lay-filter="">
           <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/home.jsp">首页</a></li>
           <li class="layui-nav-item layui-this"><a href="">好友</a></li>
           <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/messages">消息</a></li>
-          <li class="layui-nav-item"><a href="">群组</a></li>
+          <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/groupChat">群组</a></li>
         </ul>
       </div>
       <div class="layui-col-md3">
         <ul class="layui-nav" lay-filter="">
           <li class="layui-nav-item">
             <a href="javascript:;">
-              <img src="<%= currentUser.getUimage() != null ? currentUser.getUimage() : "default-avatar.jpg" %>" class="layui-nav-img">
+              <img src="${pageContext.request.contextPath}/<%= currentUser.getUimage() != null ? currentUser.getUimage() : "pictures/default-avatar.jpg" %>"
+                   class="layui-nav-img">
               <%= currentUser.getUname() %>
             </a>
             <dl class="layui-nav-child">
@@ -339,7 +340,7 @@
   <!-- 好友列表 -->
   <div class="friend-list">
     <div class="friend-header">
-      <h2 style="margin: 0; font-size: 18px;">微信</h2>
+      <h2 style="margin: 0; font-size: 18px;">好友列表</h2>
       <div>
     <span class="add-friend-btn" id="addFriendBtn">
       <i class="fas fa-user-plus"></i> 添加好友
@@ -351,7 +352,7 @@
     </div>
 
     <div class="user-info">
-      <img src="<%= currentUser.getUimage() != null ? currentUser.getUimage() : "default-avatar.jpg" %>"
+      <img src="${pageContext.request.contextPath}/<%= currentUser.getUimage() != null ? currentUser.getUimage() : "pictures/default-avatar.jpg" %>"
            class="user-avatar" alt="用户头像">
       <div>
         <div style="font-weight: 500;"><%= currentUser.getUname() %></div>
@@ -361,9 +362,6 @@
 
     <div class="search-box">
       <div class="layui-form">
-        <div class="layui-input-block">
-          <input type="text" placeholder="搜索" class="layui-input" style="background-color: #3E3E3E; border: none; color: white;">
-        </div>
       </div>
     </div>
 
@@ -372,7 +370,8 @@
       <% for (Map<String, Object> friend : friendList) { %>
       <div class="friend-item <%= friend.get("friendId").equals(currentFriendId) ? "active" : "" %>"
            data-friend-id="<%= friend.get("friendId") %>">
-        <img src="<%= friend.get("avatar") %>" class="friend-avatar" alt="好友头像">
+        <img src="${pageContext.request.contextPath}/<%= friend.get("avatar") != null ? friend.get("avatar") : "pictures/default-avatar.jpg" %>"
+             class="friend-avatar" alt="好友头像">
         <div class="friend-info">
           <div class="friend-name"><%= friend.get("friendName") %></div>
           <div class="friend-lastmsg"><%= friend.get("lastMessage") %></div>
@@ -402,7 +401,7 @@
       <% for (Conversations msg : messages) { %>
       <div class="message <%= msg.getCsenderid() == currentUser.getUid() ? "sent" : "received" %>">
         <% if (msg.getCsenderid() != currentUser.getUid()) { %>
-        <img src="<%= getFriendAvatar(friendList, msg.getCsenderid()) %>"
+        <img src="${pageContext.request.contextPath}/<%= getFriendAvatar(friendList, msg.getCsenderid()) %>"
              style="width: 35px; height: 35px; border-radius: 50%; margin-right: 10px; align-self: flex-start;">
         <% } %>
         <div class="message-bubble">
@@ -595,6 +594,7 @@
           return;
         }
 
+
         if (!messages || messages.length === 0) {
           messageDisplayElement.html('<div class="no-messages">' +
                   '<i class="far fa-comment-dots" style="font-size: 50px; margin-bottom: 15px;"></i>' +
@@ -611,9 +611,9 @@
           html += '<div class="message ' + (isSent ? 'sent' : 'received') + '">';
 
           if (!isSent) {
-            // 这里需要确保 getFriendAvatar 函数在 JS 中可用，或者从后端返回头像URL
-            // 简化处理，如果后端没有返回头像，这里会使用默认头像
-            html += '<img src="' + (msg.senderAvatar || 'default-avatar.jpg') + '" ' +
+            // 添加正确的头像路径
+            var avatarPath = '${pageContext.request.contextPath}/' + msg.senderAvatar;
+            html += '<img src="' + avatarPath + '" ' +
                     'style="width: 35px; height: 35px; border-radius: 50%; margin-right: 10px; align-self: flex-start;">';
           }
 
@@ -624,16 +624,6 @@
 
         messageDisplayElement.html(html);
       }
-
-      // 获取好友头像（模拟函数，实际应从好友数据中获取）
-      // 注意：这个JS函数在JSP的Java代码块中无法直接调用，
-      // 如果需要JS获取头像，后端返回的messages数据中应该包含senderAvatar
-      // 或者在JS中维护一个好友ID到头像URL的映射
-      // 为了兼容性，我修改了 updateMessageDisplay 函数，假设 msg 对象中可能包含 senderAvatar
-      // 如果没有，它会回退到 'default-avatar.jpg'
-      // function getFriendAvatar(friendId) {
-      //   return 'default-avatar.jpg'; // 这是一个JS函数，与JSP声明的Java方法不同
-      // }
 
 
       // 点击添加好友按钮
@@ -678,6 +668,17 @@
         return false;
       });
 
+      // 获取好友头像
+      function getFriendAvatar(friendId) {
+        // 从好友列表中查找对应的头像
+        var friendItems = $('.friend-item[data-friend-id="' + friendId + '"]');
+        if (friendItems.length > 0) {
+          var avatar = $(friendItems[0]).find('.friend-avatar').attr('src');
+          return avatar;
+        }
+        return '${pageContext.request.contextPath}/pictures/default-avatar.jpg';
+      }
+
       // 每3秒刷新一次消息
       // 调整为100毫秒，但请注意频繁刷新可能增加服务器压力
       // 建议在实际应用中使用WebSocket或长轮询
@@ -695,17 +696,16 @@
 </html>
 
 <%!
-  // JSP声明方法 - 根据好友ID获取头像
-  // 这个方法是在服务器端JSP编译时执行的，用于生成HTML
-  // 它不能在客户端JavaScript中直接调用
   private String getFriendAvatar(List<Map<String, Object>> friendList, int friendId) {
     if (friendList != null) {
       for (Map<String, Object> friend : friendList) {
-        if (friend.get("friendId") instanceof Integer && (Integer)friend.get("friendId") == friendId) {
-          return (String)friend.get("avatar");
+        if ((Integer)friend.get("friendId") == friendId) {
+          String avatar = (String)friend.get("avatar");
+          // 返回相对路径（不含上下文路径）
+          return avatar != null ? avatar : "pictures/default-avatar.jpg";
         }
       }
     }
-    return "default-avatar.jpg";
+    return "pictures/default-avatar.jpg"; // 默认头像相对路径
   }
 %>

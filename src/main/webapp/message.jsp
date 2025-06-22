@@ -1,21 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="cn.qdu.entity.Users" %>
-<%@ page import="cn.qdu.entity.FriendRequests" %>
-<%@ page import="java.util.List" %>
-<%@ page import="cn.qdu.entity.FriendRequests" %>
-<%@ page import="cn.qdu.dao.UserDao" %>
 <%
     Users currentUser = (Users) session.getAttribute("user");
     if (currentUser == null) {
         response.sendRedirect(request.getContextPath() + "/login.jsp");
         return;
     }
-
-    List<FriendRequests> friendRequests = (List<FriendRequests>) request.getAttribute("friendRequests");
 %>
 <html>
 <head>
-    <title>好友请求 - <%= currentUser.getUname() %></title>
+    <title>消息中心 - <%= currentUser.getUname() %></title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/layui/css/layui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
@@ -106,6 +100,12 @@
             margin-top: 5px;
         }
 
+        .request-group {
+            font-size: 14px;
+            color: #1E9FFF;
+            margin-top: 3px;
+        }
+
         .request-actions {
             display: flex;
             gap: 10px;
@@ -120,6 +120,24 @@
         .refresh-btn {
             margin-bottom: 20px;
         }
+
+        .request-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .request-tab {
+            padding: 8px 15px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .request-tab.active {
+            border-bottom-color: #1E9FFF;
+            color: #1E9FFF;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -128,14 +146,14 @@
     <div class="layui-container">
         <div class="layui-row">
             <div class="layui-col-md3">
-                <div class="logo">社交平台</div>
+                <div class="logo">鹿鸣台</div>
             </div>
             <div class="layui-col-md6">
                 <ul class="layui-nav" lay-filter="">
                     <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/home.jsp">首页</a></li>
                     <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/chat">好友</a></li>
                     <li class="layui-nav-item layui-this"><a href="">消息</a></li>
-                    <li class="layui-nav-item"><a href="">群组</a></li>
+                    <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/groupChat">群组</a></li>
                 </ul>
             </div>
             <div class="layui-col-md3">
@@ -159,39 +177,25 @@
 
 <!-- 主内容区 -->
 <div class="container">
-    <h2 class="request-title">好友请求</h2>
+    <h2 class="request-title">消息中心</h2>
+
+    <!-- 请求类型标签页 -->
+    <div class="request-tabs">
+        <div class="request-tab active" data-type="all">全部请求</div>
+        <div class="request-tab" data-type="friend">好友请求</div>
+        <div class="request-tab" data-type="group">群组请求</div>
+    </div>
 
     <button class="layui-btn layui-btn-normal refresh-btn" id="refreshBtn">
         <i class="layui-icon layui-icon-refresh"></i> 刷新
     </button>
 
     <div class="request-list" id="requestList">
-        <% if (friendRequests != null && !friendRequests.isEmpty()) { %>
-        <% for (FriendRequests requests : friendRequests) { %>
-        <div class="request-item" data-request-id="<%= requests.getReqid() %>">
-            <% UserDao userDao = new UserDao();
-                List<Users> users = userDao.selectById(requests.getReqid());
-                Users user = users.get(0);
-            %>
-            <img src="<%= user.getUimage() != null ? user.getUimage() : "default-avatar.jpg" %>"
-                 class="request-avatar" alt="用户头像">
-            <div class="request-info">
-                <div class="request-name"><%= user.getUname() %></div>
-                <div class="request-id">ID: <%= user.getUid() %></div>
-                <div class="request-message">验证消息: <%= requests.getMessage() != null ? requests.getMessage() : "无" %></div>
-            </div>
-            <div class="request-actions">
-                <button class="layui-btn layui-btn-sm layui-btn-normal accept-btn" data-id="<%= user.getUid() %>">接受</button>
-                <button class="layui-btn layui-btn-sm layui-btn-danger reject-btn" data-id="<%= user.getUid() %>">拒绝</button>
-            </div>
-        </div>
-        <% } %>
-        <% } else { %>
+        <!-- 请求列表将通过AJAX动态加载 -->
         <div class="no-requests">
             <i class="layui-icon layui-icon-face-smile" style="font-size: 50px;"></i>
-            <div style="margin-top: 15px; font-size: 16px;">暂无好友请求</div>
+            <div style="margin-top: 15px; font-size: 16px;">加载中...</div>
         </div>
-        <% } %>
     </div>
 </div>
 
@@ -202,13 +206,46 @@
         var layer = layui.layer;
         var $ = layui.$;
 
-        // 刷新好友请求列表
+        // 当前选中的请求类型
+        var currentRequestType = 'all';
+
+        // 刷新请求列表
         function refreshRequests() {
             $.get('${pageContext.request.contextPath}/messages', {
                 action: 'refreshRequests'
             }, function(data) {
                 $('#requestList').html(data);
+
+                // 根据当前选中的类型过滤请求
+                filterRequests(currentRequestType);
             });
+        }
+
+        // 过滤请求类型
+        function filterRequests(type) {
+            currentRequestType = type;
+
+            // 更新标签页状态
+            $('.request-tab').removeClass('active');
+            $(`.request-tab[data-type="${type}"]`).addClass('active');
+
+            // 过滤请求项
+            $('.request-item').each(function() {
+                var itemType = $(this).data('request-type');
+                $(this).toggle(
+                    type === 'all' || itemType === type
+                );
+            });
+
+            // 检查是否没有请求
+            var visibleItems = $('.request-item:visible').length;
+            if (visibleItems === 0 && $('.no-requests').length === 0) {
+                $('#requestList').append('<div class="no-requests">' +
+                    '<i class="layui-icon layui-icon-face-smile" style="font-size: 50px;"></i>' +
+                    '<div style="margin-top: 15px; font-size: 16px;">暂无请求</div></div>');
+            } else if (visibleItems > 0) {
+                $('.no-requests').remove();
+            }
         }
 
         // 点击刷新按钮
@@ -216,36 +253,50 @@
             refreshRequests();
         });
 
-        // 接受好友请求
-        $(document).on('click', '.accept-btn', function() {
-            var requestId = $(this).closest('.request-item').data('request-id');
-            handleRequest(requestId, 'accept');
+        // 点击标签页
+        $('.request-tabs').on('click', '.request-tab', function() {
+            var type = $(this).data('type');
+            filterRequests(type);
         });
 
-        // 拒绝好友请求
-        $(document).on('click', '.reject-btn', function() {
-            var requestId = $(this).closest('.request-item').data('request-id');
-            handleRequest(requestId, 'reject');
-        });
+        // 处理接受/拒绝按钮点击
+        $(document).on('click', '.accept-btn, .reject-btn', function() {
+            var requestItem = $(this).closest('.request-item');
+            var requestId = requestItem.data('request-id');
+            var requestType = requestItem.data('request-type');
+            var actionType = $(this).hasClass('accept-btn') ? 'accept' : 'reject';
 
-        // 处理好友请求
-        function handleRequest(requestId, action) {
             $.post('${pageContext.request.contextPath}/messages', {
                 action: 'handleRequest',
+                requestType: requestType,
                 requestId: requestId,
-                type: action
+                type: actionType
             }, function(res) {
                 if (res.success) {
-                    layer.msg(action === 'accept' ? '已接受好友请求' : '已拒绝好友请求', {icon: 1});
-                    refreshRequests();
+                    layer.msg(res.message, {icon: 1});
+                    // 移除请求项
+                    requestItem.remove();
+
+                    // 检查是否没有请求了
+                    if ($('.request-item').length === 0) {
+                        $('#requestList').html('<div class="no-requests">' +
+                            '<i class="layui-icon layui-icon-face-smile" style="font-size: 50px;"></i>' +
+                            '<div style="margin-top: 15px; font-size: 16px;">暂无请求</div></div>');
+                    } else {
+                        // 重新过滤
+                        filterRequests(currentRequestType);
+                    }
                 } else {
                     layer.msg(res.message || '操作失败', {icon: 2});
                 }
             }, 'json');
-        }
+        });
 
-        // 初始加载后5秒自动刷新一次
-        setTimeout(refreshRequests, 5000);
+        // 初始加载
+        refreshRequests();
+
+        // 每30秒自动刷新一次
+        setInterval(refreshRequests, 30000);
     });
 </script>
 </body>
