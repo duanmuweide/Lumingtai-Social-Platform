@@ -14,19 +14,23 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class Groupspeopledao {
-    //群成员的插入函数，成功返回1，否则返回0
     public int insert(Groupspeople groupspeople) {
         Suid suid = BF.getSuid();
-        if(suid.insert(groupspeople)>0){
-            //插入群成员后群的人数要加一
+        int result = suid.insert(groupspeople);
+
+        if (result > 0) {
+            // 更新群组人数
             Usergroupsdao usergroupsdao = new Usergroupsdao();
-            Usergroups usergroups=usergroupsdao.select(groupspeople.getGpid());
-            usergroups.setGnumber(usergroups.getGnumber()+1);
-            usergroupsdao.update(usergroups);
+            Usergroups usergroup = usergroupsdao.select(groupspeople.getGpid());
+
+            if (usergroup != null) {
+                usergroup.setGnumber(usergroup.getGnumber() + 1);
+                // 使用安全的更新方法
+                usergroupsdao.update(usergroup);
+            }
             return 1;
-        }else{
-            return 0;
         }
+        return 0;
     }
 
     //更新群成员的群昵称和群身份，成功返回1，否则返回0
@@ -59,27 +63,25 @@ public class Groupspeopledao {
     }
 
 
-    // 群某个成员的删除函数，成功返回1，否则返回0
     public int deletepeople(int gid, int uid) {
         Suid suid = BF.getSuid();
+        Groupspeople groupspeople = select(gid, uid);
+        if (groupspeople == null) return 0;
 
-        // 1. 先根据复合主键(gid, uid)查询实体是否存在
-        Groupspeople groupspeople = select(gid,uid);
-        if (groupspeople == null) {
-            return 0; // 不存在则直接返回失败
-        }
-
-        // 2. 直接删除实体对象
-        if(suid.delete(groupspeople)>0){
-            //删除群成员后群的人数要减一
+        int result = suid.delete(groupspeople);
+        if (result > 0) {
+            // 更新群组人数
             Usergroupsdao usergroupsdao = new Usergroupsdao();
-            Usergroups usergroups=usergroupsdao.select(groupspeople.getGpid());
-            usergroups.setGnumber(usergroups.getGnumber()-1);
-            usergroupsdao.update(usergroups);
+            Usergroups usergroup = usergroupsdao.select(gid);
+
+            if (usergroup != null) {
+                int newCount = usergroup.getGnumber() - 1;
+                usergroup.setGnumber(newCount > 0 ? newCount : 0); // 防止负数
+                usergroupsdao.update(usergroup);
+            }
             return 1;
-        }else{
-            return 0;
         }
+        return 0;
     }
 
     //群的删除

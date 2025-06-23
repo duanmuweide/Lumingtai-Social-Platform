@@ -5,6 +5,7 @@ import org.teasoft.bee.osql.api.Suid;
 import org.teasoft.bee.osql.api.Condition;
 import org.teasoft.honey.osql.shortcut.BF;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Groupsconversationsdao {
@@ -86,8 +87,8 @@ public class Groupsconversationsdao {
         Condition condition = BF.getCondition();
         condition.op("gcgid", Op.eq, id);
 
-        List<Groupsconversations> usergroupsList = suid.select(new Groupsconversations(), condition);
-        return usergroupsList.isEmpty() ? null : usergroupsList;
+        List<Groupsconversations> result = suid.select(new Groupsconversations(), condition);
+        return result != null ? result : Collections.emptyList(); // 确保不返回null
     }
 
 

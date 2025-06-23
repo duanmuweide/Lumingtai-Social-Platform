@@ -38,7 +38,7 @@ public class LoginServlet extends HttpServlet {
 
             if (users != null && !users.isEmpty()) {
                 Users user = users.get(0);
-                // 简单密码验证 (实际项目中应该使用加密验证)
+                // 简单密码验证 
                 if (user.getUpwd().equals(password)) {
                     request.getSession().setAttribute("user", user);
                     out.print("{\"success\": true}");

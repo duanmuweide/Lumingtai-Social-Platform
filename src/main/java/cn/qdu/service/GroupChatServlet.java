@@ -7,22 +7,40 @@ import cn.qdu.entity.Usergroups;
 import cn.qdu.entity.Users;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @WebServlet("/groupChat")
+@MultipartConfig(
+        maxFileSize = 10485760,    // 10MB
+        maxRequestSize = 20971520, // 20MB
+        fileSizeThreshold = 0
+)
 public class GroupChatServlet extends HttpServlet {
     private UserDao userDao = new UserDao();
     private Groupspeopledao groupsPeopleDao = new Groupspeopledao();
     private Groupsconversationsdao groupConversationsDao = new Groupsconversationsdao();
     private Usergroupsdao userGroupsDao = new Usergroupsdao();
     private GrouprequestsDao groupRequestsDao = new GrouprequestsDao();
+
+    // 允许的头像文件类型
+    private static final String[] ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/gif"};
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -141,13 +159,13 @@ public class GroupChatServlet extends HttpServlet {
                 }
 
                 // 检查是否有待处理的请求
-                if (GrouprequestsDao.hasPendingRequest(currentUser.getUid(), groupId)) {
+                if (groupRequestsDao.hasPendingRequest(currentUser.getUid(), groupId)) {
                     out.print("{\"success\": false, \"error\": \"您已发送过请求，请等待处理\"}");
                     return;
                 }
 
                 // 创建群组请求
-                boolean success = GrouprequestsDao.createGroupRequest(
+                boolean success = groupRequestsDao.createGroupRequest(
                         currentUser.getUid(),
                         groupId,
                         message
@@ -180,18 +198,18 @@ public class GroupChatServlet extends HttpServlet {
             } else if ("getGroupInfo".equals(action)) {
                 // 获取群组详细信息和成员列表
                 int groupId = Integer.parseInt(request.getParameter("groupId"));
-                
+
                 // 获取群组基本信息
                 Usergroups group = userGroupsDao.select(groupId);
                 if (group == null) {
                     out.print("{\"success\": false, \"error\": \"群组不存在\"}");
                     return;
                 }
-                
+
                 // 获取群成员列表
                 List<Groupspeople> members = groupsPeopleDao.selectall(groupId);
                 List<Map<String, Object>> memberList = new ArrayList<>();
-                
+
                 if (members != null) {
                     for (Groupspeople member : members) {
                         Map<String, Object> memberInfo = new HashMap<>();
@@ -199,24 +217,24 @@ public class GroupChatServlet extends HttpServlet {
                         memberInfo.put("groupNickname", member.getGpname() != null ? member.getGpname() : "");
                         memberInfo.put("identity", member.getGpidentity());
                         memberInfo.put("joinDate", member.getGpdate() != null ? member.getGpdate() : "");
-                        
+
                         // 获取用户基本信息
                         List<Users> users = userDao.selectById(member.getGpuid());
                         if (users != null && !users.isEmpty()) {
                             Users user = users.get(0);
                             memberInfo.put("username", user.getUname() != null ? user.getUname() : "用户" + member.getGpuid());
-                            memberInfo.put("avatar", user.getUimage() != null && !user.getUimage().trim().isEmpty() ? 
+                            memberInfo.put("avatar", user.getUimage() != null && !user.getUimage().trim().isEmpty() ?
                                     user.getUimage() : "pictures/default-avatar.jpg");
                         } else {
                             // 如果用户信息获取失败，设置默认值
                             memberInfo.put("username", "用户" + member.getGpuid());
                             memberInfo.put("avatar", "pictures/default-avatar.jpg");
                         }
-                        
+
                         memberList.add(memberInfo);
                     }
                 }
-                
+
                 // 构建响应JSON
                 StringBuilder json = new StringBuilder();
                 json.append("{\"success\": true, \"groupInfo\": {");
@@ -227,7 +245,7 @@ public class GroupChatServlet extends HttpServlet {
                 json.append("\"memberCount\":").append(group.getGnumber() != null ? group.getGnumber() : 0).append(",");
                 json.append("\"createDate\":\"").append(group.getGdate() != null ? group.getGdate() : "").append("\"");
                 json.append("}, \"members\": [");
-                
+
                 for (int i = 0; i < memberList.size(); i++) {
                     Map<String, Object> member = memberList.get(i);
                     json.append("{");
@@ -242,9 +260,87 @@ public class GroupChatServlet extends HttpServlet {
                         json.append(",");
                     }
                 }
-                
+
                 json.append("]}");
                 out.print(json.toString());
+            } else if ("createGroup".equals(action)) {
+                // 处理创建群聊请求
+                String groupName = request.getParameter("groupName");
+                String groupDescription = request.getParameter("groupDescription");
+
+                if (groupName == null || groupName.trim().isEmpty()) {
+                    out.print("{\"success\": false, \"error\": \"群名称不能为空\"}");
+                    return;
+                }
+
+                // 处理群头像上传
+                String imagePath = null;
+                Part filePart = request.getPart("groupAvatar");
+                if (filePart != null && filePart.getSize() > 0) {
+                    // 验证文件类型
+                    String contentType = filePart.getContentType();
+                    boolean isAllowedType = false;
+                    for (String type : ALLOWED_IMAGE_TYPES) {
+                        if (type.equals(contentType)) {
+                            isAllowedType = true;
+                            break;
+                        }
+                    }
+                    if (!isAllowedType) {
+                        out.print("{\"success\": false, \"error\": \"只允许上传JPG、PNG或GIF格式的图片\"}");
+                        return;
+                    }
+
+                    // 生成唯一文件名
+                    String fileName = UUID.randomUUID().toString() + getFileExtension(filePart);
+                    String uploadPath = getServletContext().getRealPath("/pictures");
+                    File uploadDir = new File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdirs();
+                    }
+                    filePart.write(uploadPath + File.separator + fileName);
+                    imagePath = "pictures/" + fileName;
+                } else {
+                    // 使用默认群头像
+                    imagePath = "pictures/default-group-avatar.jpg";
+                }
+
+                // 创建群组（初始人数为0）
+                Usergroups newGroup = new Usergroups();
+                newGroup.setGname(groupName);
+                newGroup.setGimage(imagePath);
+                newGroup.setGdescription(groupDescription);
+                newGroup.setGnumber(0); // 初始为0人
+
+                // 设置创建时间
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String currentDate = sdf.format(new Date());
+                newGroup.setGdate(currentDate);
+
+                // 插入群组
+                int groupId = userGroupsDao.insertReturnId(newGroup);
+                if (groupId <= 0) {
+                    out.print("{\"success\": false, \"error\": \"创建群组失败\"}");
+                    return;
+                }
+
+                // 将创建者加入群组
+                Groupspeople groupOwner = new Groupspeople();
+                groupOwner.setGpid(groupId);
+                groupOwner.setGpuid(currentUser.getUid());
+                groupOwner.setGpidentity(3); // 群主
+                groupOwner.setGpdate(currentDate);
+
+                // 插入群成员（会自动更新人数）
+                int result = groupsPeopleDao.insert(groupOwner);
+                if (result <= 0) {
+                    // 回滚群组创建
+                    userGroupsDao.delete(groupId);
+                    out.print("{\"success\": false, \"error\": \"添加群主失败\"}");
+                    return;
+                }
+
+                out.print("{\"success\": true, \"groupId\": " + groupId + "}");
             }
         } catch (Exception e) {
             out.print("{\"success\": false, \"error\": \"服务器内部错误: " + e.getMessage() + "\"}");
@@ -252,6 +348,19 @@ public class GroupChatServlet extends HttpServlet {
         } finally {
             out.close();
         }
+    }
+
+    // 获取文件扩展名
+    private String getFileExtension(Part part) {
+        String contentDisp = part.getHeader("content-disposition");
+        String[] tokens = contentDisp.split(";");
+        for (String token : tokens) {
+            if (token.trim().startsWith("filename")) {
+                String fileName = token.substring(token.indexOf("=") + 2, token.length() - 1);
+                return fileName.substring(fileName.lastIndexOf("."));
+            }
+        }
+        return "";
     }
 
     private List<Map<String, Object>> getGroupList(int userId) {
@@ -275,7 +384,7 @@ public class GroupChatServlet extends HttpServlet {
 
     private String getLastGroupMessage(int groupId) {
         List<Groupsconversations> messages = groupConversationsDao.selectbygid(groupId);
-        if (!messages.isEmpty()) {
+        if (messages != null && !messages.isEmpty()) {
             return messages.get(messages.size() - 1).getGcmessage();
         }
         return "暂无消息";

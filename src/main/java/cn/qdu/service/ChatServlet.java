@@ -5,6 +5,7 @@ import cn.qdu.dao.FriendrequestsDao;
 import cn.qdu.dao.RelationshipDao;
 import cn.qdu.dao.UserDao;
 import cn.qdu.entity.Conversations;
+import cn.qdu.entity.FriendRequests;
 import cn.qdu.entity.Relationship;
 import cn.qdu.entity.Users;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -105,28 +106,24 @@ public class ChatServlet extends HttpServlet {
                 jsonMap.put("success", result > 0);
 
             } else if ("refresh".equals(action)) {
+                // 刷新消息
                 int friendId = Integer.parseInt(request.getParameter("friendId"));
                 List<Conversations> messages = conversationsDao.getConversations(currentUser.getUid(), friendId);
 
+                // 转换为前端需要的格式
                 List<Map<String, Object>> messageList = new ArrayList<>();
                 for (Conversations msg : messages) {
                     Map<String, Object> messageMap = new HashMap<>();
                     messageMap.put("senderId", msg.getCsenderid());
                     messageMap.put("receiverId", msg.getCreceiverid());
                     messageMap.put("message", msg.getCmessage());
-                    messageMap.put("date", msg.getCdate());
-
-                    // 添加头像字段
-                    Users sender = userDao.selectById(msg.getCsenderid()).get(0);
-                    String avatar = sender.getUimage() != null ?
-                            sender.getUimage() : "pictures/default-avatar.jpg";
-                    messageMap.put("senderAvatar", avatar);
-
+                    messageMap.put("date", msg.getCdate()); // 确保这是字符串格式
                     messageList.add(messageMap);
                 }
 
                 jsonMap.put("success", true);
-                jsonMap.put("messages", messageList);
+                jsonMap.put("messages", messageList); // 使用转换后的列表
+
 
             } else if ("friends".equals(action)) {
                 // 获取好友列表
@@ -136,7 +133,7 @@ public class ChatServlet extends HttpServlet {
 
             }else if("deleteFriend".equals(action)){
                 int friendId = Integer.parseInt(request.getParameter("friendId"));
-                // 删除两个关系以及他们的所有消息
+                // 删除两个关系以及他们的所有消息以及他们的请求验证
                 RelationshipDao relationshipDao = new RelationshipDao();
                 Relationship relationship = new Relationship();
 
@@ -149,22 +146,35 @@ public class ChatServlet extends HttpServlet {
 
                 // 删除消息
                 Conversationsdao conversationsDao = new Conversationsdao();
+                Conversations conversation = new Conversations();
 
                 List<Conversations> con = conversationsDao.selectBytwoid(currentUser.getUid(), friendId);
-                if(con != null && con.size() > 0){
+                if(con.size()>0){
                     for(Conversations c : con){
                         conversationsDao.delete(c);
                     }
                 }
 
                 List<Conversations> con2 = conversationsDao.selectBytwoid(friendId, currentUser.getUid());
-                if(con2 != null && con2.size() > 0){
+                if(con2.size()>0){
                     for(Conversations c : con2){
                         conversationsDao.delete(c);
                     }
                 }
 
+                // 删除请求表
+                FriendrequestsDao friendrequestsDao = new FriendrequestsDao();
+                FriendRequests f = FriendrequestsDao.selectBytwoidandstatus(currentUser.getUid(), friendId);
+                if(f != null){
+                    friendrequestsDao.delete(f);
+                }else {
+                    f = FriendrequestsDao.selectBytwoidandstatus(friendId, currentUser.getUid());
+                    friendrequestsDao.delete(f);
+                }
+
+
                 jsonMap.put("success", true);
+
             }
 
             // 将Map转换为JSON字符串
@@ -216,14 +226,7 @@ public class ChatServlet extends HttpServlet {
                 return;
             }
 
-            // 5. 如果对方已经给你发送了请求，那么你不可以再给他发送
-            if (hasPendingRequest(friendId, currentUser.getUid())) {
-                jsonMap.put("success", false);
-                jsonMap.put("message", "对方已经向你发送了请求");
-                return;
-            }
-
-            // 6. 创建好友请求记录
+            // 5. 创建好友请求记录
             boolean success = createFriendRequest(currentUser.getUid(), friendId, message);
 
             if (success) {
@@ -271,7 +274,6 @@ public class ChatServlet extends HttpServlet {
                 Map<String, Object> friendInfo = new HashMap<>();
                 friendInfo.put("friendId", friend.getUid());
                 friendInfo.put("friendName", friend.getUname());
-                // 这里直接从数据库获取uimage字段
                 friendInfo.put("avatar", friend.getUimage() != null ? friend.getUimage() : "default-avatar.jpg");
                 friendInfo.put("lastMessage", getLastMessage(userId, friend.getUid()));
                 friendList.add(friendInfo);
@@ -286,46 +288,5 @@ public class ChatServlet extends HttpServlet {
             return messages.get(messages.size() - 1).getCmessage();
         }
         return "暂无消息";
-    }
-
-    private String buildMessagesJson(List<Conversations> messages) {
-        StringBuilder json = new StringBuilder("{\"success\": true, \"messages\": [");
-        for (Conversations msg : messages) {
-            json.append("{\"senderId\":").append(msg.getCsenderid())
-                    .append(",\"receiverId\":").append(msg.getCreceiverid())
-                    .append(",\"message\":\"").append(escapeJson(msg.getCmessage()))
-                    .append("\",\"date\":\"").append(msg.getCdate())
-                    .append("\"},");
-        }
-        if (!messages.isEmpty()) {
-            json.deleteCharAt(json.length() - 1);
-        }
-        json.append("]}");
-        return json.toString();
-    }
-
-    private String buildFriendListJson(List<Map<String, Object>> friendList) {
-        StringBuilder json = new StringBuilder("{\"success\": true, \"friends\": [");
-        for (Map<String, Object> friend : friendList) {
-            json.append("{\"friendId\":").append(friend.get("friendId"))
-                    .append(",\"friendName\":\"").append(escapeJson((String)friend.get("friendName")))
-                    .append("\",\"avatar\":\"").append(escapeJson((String)friend.get("avatar")))
-                    .append("\",\"lastMessage\":\"").append(escapeJson((String)friend.get("lastMessage")))
-                    .append("\"},");
-        }
-        if (!friendList.isEmpty()) {
-            json.deleteCharAt(json.length() - 1);
-        }
-        json.append("]}");
-        return json.toString();
-    }
-
-    private String escapeJson(String input) {
-        if (input == null) return "";
-        return input.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
     }
 }

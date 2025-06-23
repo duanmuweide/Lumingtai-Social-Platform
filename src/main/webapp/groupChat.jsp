@@ -81,7 +81,7 @@
             background-color: transparent !important;
         }
 
-        .layui-nav-item a {
+        .layui-nav-item {
             color: #fff !important;
         }
 
@@ -91,11 +91,6 @@
 
         .layui-nav .layui-this {
             background-color: rgba(30, 159, 255, 0.5) !important;
-        }
-        
-        /* 修复下拉菜单字体颜色问题 */
-        .layui-nav .layui-nav-child dd a {
-            color: #333 !important;
         }
 
         /* 聊天容器 */
@@ -318,6 +313,35 @@
         .action-button:hover {
             background-color: rgba(30, 159, 255, 0.1);
         }
+
+        /* 头像预览样式 */
+        .avatar-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .avatar-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+        .avatar-preview i {
+            font-size: 24px;
+            color: #999;
+        }
+        .avatar-text {
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -326,7 +350,7 @@
     <div class="layui-container">
         <div class="layui-row">
             <div class="layui-col-md3">
-                <div class="logo">鹿鸣台</div>
+                <div class="logo">社交平台</div>
             </div>
             <div class="layui-col-md6">
                 <ul class="layui-nav" lay-filter="">
@@ -334,18 +358,19 @@
                     <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/chat">好友</a></li>
                     <li class="layui-nav-item"><a href="${pageContext.request.contextPath}/messages">消息</a></li>
                     <li class="layui-nav-item layui-this"><a href="${pageContext.request.contextPath}/groupChat">群组</a></li>
-
                 </ul>
             </div>
             <div class="layui-col-md3">
                 <ul class="layui-nav" lay-filter="">
                     <li class="layui-nav-item">
                         <a href="javascript:;">
-                            <img src="<%= currentUser.getUimage() != null ? request.getContextPath() + "/" + currentUser.getUimage() : request.getContextPath() + "/static/images/default/default-wll.jpg" %>" class="layui-nav-img">
+                            <img src="${pageContext.request.contextPath}/<%= currentUser.getUimage() != null ? currentUser.getUimage() : "pictures/default-avatar.jpg" %>"
+                                 class="layui-nav-img">
                             <%= currentUser.getUname() %>
                         </a>
                         <dl class="layui-nav-child">
-                            <dd><a href="${pageContext.request.contextPath}/editProfile.jsp">编辑资料</a></dd>
+                            <dd><a href="javascript:;">个人主页</a></dd>
+                            <dd><a href="javascript:;">账号设置</a></dd>
                             <dd><a href="${pageContext.request.contextPath}/logout">退出登录</a></dd>
                         </dl>
                     </li>
@@ -362,6 +387,9 @@
         <div class="group-header">
             <h2 style="margin: 0; font-size: 18px;">我的群组</h2>
             <div class="group-actions">
+                <button class="action-button" id="btnCreateGroup">
+                    <i class="fas fa-plus-circle"></i> 创建群聊
+                </button>
                 <button class="action-button" id="btnAddGroup">
                     <i class="fas fa-plus"></i> 添加群聊
                 </button>
@@ -481,10 +509,11 @@
 <script src="${pageContext.request.contextPath}/layui/layui.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script>
-    layui.use(['form', 'layer'], function() {
+    layui.use(['form', 'layer', 'upload'], function() {
         var form = layui.form;
         var layer = layui.layer;
         var $ = layui.$;
+        var upload = layui.upload;
 
         // 当前选中的群组
         var currentGroupId = $('#currentGroupId').val();
@@ -615,7 +644,114 @@
             return defaultAvatar;
         }
 
-        // 添加群聊按钮点击事件 - 修复：添加弹出层让用户输入群组ID和验证信息
+        // 创建群聊按钮点击事件
+        $('#btnCreateGroup').click(function() {
+            // 创建群聊表单HTML
+            var formHtml = `
+                <div style="padding: 20px;">
+                    <div class="avatar-container">
+                        <div class="avatar-preview" id="groupAvatarPreview">
+                            <i class="fas fa-camera"></i>
+                            <img id="previewGroupAvatar" src="#" alt="群头像预览">
+                        </div>
+                        <div class="avatar-text">点击上传群头像</div>
+                        <input type="file" name="groupAvatar" id="groupAvatarInput" style="display: none;">
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">群名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="groupName" placeholder="请输入群名称" class="layui-input" required>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">群描述</label>
+                        <div class="layui-input-block">
+                            <textarea id="groupDescription" placeholder="请输入群描述（可选）" class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 打开创建群聊的弹出层
+            var index = layer.open({
+                type: 1,
+                title: '创建群聊',
+                content: formHtml,
+                area: ['500px', '450px'],
+                btn: ['创建', '取消'],
+                success: function(layero, index) {
+                    // 头像预览功能
+                    $('#groupAvatarPreview').click(function() {
+                        $('#groupAvatarInput').click();
+                    });
+
+                    $('#groupAvatarInput').on('change', function(e) {
+                        var file = e.target.files[0];
+                        if (file) {
+                            var reader = new FileReader();
+                            reader.onload = function(e) {
+                                $('#previewGroupAvatar').attr('src', e.target.result).show();
+                                $('#groupAvatarPreview i').hide();
+                            }
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                },
+                yes: function(index, layero) {
+                    var groupName = $('#groupName').val().trim();
+                    var groupDescription = $('#groupDescription').val().trim();
+                    var avatarFile = $('#groupAvatarInput')[0].files[0];
+
+                    if (!groupName) {
+                        layer.msg('请输入群名称', {icon: 2});
+                        return;
+                    }
+
+                    // 创建FormData对象
+                    var formData = new FormData();
+                    formData.append('action', 'createGroup');
+                    formData.append('groupName', groupName);
+                    formData.append('groupDescription', groupDescription);
+
+                    if (avatarFile) {
+                        formData.append('groupAvatar', avatarFile);
+                    }
+
+                    // 显示加载层
+                    var loadIndex = layer.load(1, {
+                        shade: [0.1, '#fff']
+                    });
+
+                    // 发送创建群聊请求
+                    $.ajax({
+                        url: '${pageContext.request.contextPath}/groupChat',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(res) {
+                            layer.close(loadIndex);
+                            if (res.success) {
+                                layer.msg('群聊创建成功', {icon: 1}, function() {
+                                    layer.close(index);
+                                    // 刷新页面
+                                    window.location.reload();
+                                });
+                            } else {
+                                layer.msg(res.error || '创建群聊失败', {icon: 2});
+                            }
+                        },
+                        error: function() {
+                            layer.close(loadIndex);
+                            layer.msg('请求失败，请稍后重试', {icon: 2});
+                        },
+                        dataType: 'json'
+                    });
+                }
+            });
+        });
+
+        // 添加群聊按钮点击事件
         $('#btnAddGroup').click(function() {
             layer.open({
                 type: 1,
@@ -663,7 +799,7 @@
             });
         });
 
-        // 删除群聊按钮点击事件 - 修复：不需要向群主请求，直接退出群组
+        // 删除群聊按钮点击事件
         $('#btnDeleteGroup').click(function() {
             if (!currentGroupId) {
                 layer.msg('请先选择一个群组', {icon: 0});
@@ -709,7 +845,7 @@
                 groupId: currentGroupId
             }, function(res) {
                 layer.close(loadIndex);
-                
+
                 if (res.success) {
                     showGroupInfoModal(res.groupInfo, res.members);
                 } else {
@@ -724,7 +860,7 @@
             var owners = members.filter(function(m) { return m.identity == 3; });
             var admins = members.filter(function(m) { return m.identity == 2; });
             var normalMembers = members.filter(function(m) { return m.identity == 1; });
-            
+
             // 获取上下文路径
             var contextPath = '${pageContext.request.contextPath}';
 

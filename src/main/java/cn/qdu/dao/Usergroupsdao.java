@@ -7,10 +7,7 @@ import org.teasoft.bee.osql.api.Suid;
 import org.teasoft.bee.osql.api.Condition;
 import org.teasoft.honey.osql.shortcut.BF;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 public class Usergroupsdao {
@@ -20,32 +17,56 @@ public class Usergroupsdao {
         return suid.insert(usergroup) > 0 ? 1 : 0;
     }
 
-    public int update(Usergroups usergroup) {
+    public int insertReturnId(Usergroups usergroup) {
         String url = "jdbc:mysql://127.0.0.1:3306/social_platform?characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai";
         String username = "root";
         String password = "root";
-        // 更新除了gid和gdate外的所有字段
-        String sql = "UPDATE usergroups SET gname = ?, gimage = ?, gdescription = ?, gnumber = ? WHERE gid = ?";
+
+        // 使用 RETURN_GENERATED_KEYS 选项获取自增ID
+        String sql = "INSERT INTO usergroups (gname, gimage, gdescription, gnumber, gdate) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(url, username, password);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            // 设置所有可更新的参数
             pstmt.setString(1, usergroup.getGname());
             pstmt.setString(2, usergroup.getGimage());
             pstmt.setString(3, usergroup.getGdescription());
             pstmt.setInt(4, usergroup.getGnumber());
-            // WHERE条件参数
-            pstmt.setInt(5, usergroup.getGid());
+            pstmt.setString(5, usergroup.getGdate());
 
             int affectedRows = pstmt.executeUpdate();
 
-            // 成功返回1，失败返回0
-            return affectedRows > 0 ? 1 : 0;
-
+            if (affectedRows > 0) {
+                try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1); // 返回生成的自增ID
+                    }
+                }
+            }
+            return 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            return 0; // 发生异常返回0表示失败
+            return 0;
+        }
+    }
+
+    public int update(Usergroups usergroup) {
+        String url = "jdbc:mysql://127.0.0.1:3306/social_platform?characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai";
+        String username = "root";
+        String password = "root";
+
+        String sql = "UPDATE usergroups SET gnumber = ? WHERE gid = ?";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, usergroup.getGnumber());
+            pstmt.setInt(2, usergroup.getGid());
+
+            return pstmt.executeUpdate() > 0 ? 1 : 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
         }
     }
 
